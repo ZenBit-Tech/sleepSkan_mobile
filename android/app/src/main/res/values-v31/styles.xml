@@ -1,0 +1,10 @@
+<resources>
+  <style name="Theme.SleepScan.Splash" parent="Theme.AppCompat.DayNight.NoActionBar">
+    <item name="android:windowBackground">@android:color/black</item>
+
+    <!-- Hide the Android-12 system icon so you don't see a tiny circle -->
+    <item name="android:windowSplashScreenBackground">#000000</item>
+    <item name="android:windowSplashScreenAnimatedIcon">@drawable/ic_splash_blank</item>
+    <!-- Don't set postSplashScreenTheme here; we show our own layout next -->
+  </style>
+</resources>

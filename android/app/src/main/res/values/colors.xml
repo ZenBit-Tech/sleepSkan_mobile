@@ -1,0 +1,4 @@
+<resources>
+  <color name="splash_bg_color">#000000</color> <!-- pick your brand color -->
+  <!-- <color name="splash_icon_bg">#FFFFFF</color> -->
+</resources>

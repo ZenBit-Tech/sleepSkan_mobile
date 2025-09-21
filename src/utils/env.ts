@@ -1,0 +1,31 @@
+import {
+  STAGE_URL,
+  // AUTH_STAGE_URL,
+  // BASIC_AUTH_USERNAME,
+  // BASIC_AUTH_PASSWORD,
+  // PRIVACY_POLICY,
+  // TERMS_OF_USE,
+  // SUPPORT_MAIL,
+  // ENCRYPT_DEVICE_KEY,
+  // WIX_API_KEY,
+  // WIX_SITE_ID,
+  // WIX_POST_URL,
+  // E_STORE,
+  // AMPLITUDE_API_KEY,
+} from 'react-native-dotenv';
+
+export const ENV = {
+  STAGE_URL,
+  // AUTH_STAGE_URL,
+  // BASIC_AUTH_USERNAME,
+  // BASIC_AUTH_PASSWORD,
+  // PRIVACY_POLICY,
+  // TERMS_OF_USE,
+  // SUPPORT_MAIL,
+  // ENCRYPT_DEVICE_KEY,
+  // WIX_API_KEY,
+  // WIX_SITE_ID,
+  // WIX_POST_URL,
+  // E_STORE,
+  // AMPLITUDE_API_KEY,
+};
