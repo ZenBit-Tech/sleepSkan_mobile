@@ -170,6 +170,8 @@ export default {
       redAlcohol1: 'O consumo frequente de álcool está associado a um maior risco de apneia do sono, mesmo em quantidades moderadas. Reduzir a frequência semanal pode melhorar a qualidade do sono e reduzir eventos de apneia.',
       greenAlcohol2: 'Manter o consumo abaixo de 3 doses por vez está alinhado com os limites recomendados para minimizar os efeitos negativos no sono.',
       redAlcohol2: 'Beber 3 ou mais doses numa só ocasião (o equivalente a 3 copos de vinho ou 3 cervejas) está associado ao agravamento da apneia do sono. Considere reduzir a dose especialmente nas 3 horas antes de dormir.',
+      newRecording: 'Repetir gravação',
+      reviewRecording: 'Ver os detalhes da última gravação'
     },
     recording: {
       startRecording: 'Iniciar Gravação',
@@ -196,5 +198,19 @@ export default {
       keepOpen: 'Por favor, não feche a aplicação - o seu relatório poderá ser perdido ',
       left: 'Restam'
     },
+    results: {
+      title: 'Risco de Apneia',
+      low: 'BAIXO',
+      high: 'MÉDIO',
+      moderate: 'ALTO',
+      snoreCount: 'Frequência do ronco: ',
+      interval: 'Intervalo médio entre roncos: ',
+      seconds: 'segundos',
+      perMin: 'por minuto',
+      snoreIntensity: 'Intensidade máxima de ronco',
+      sleepTime: 'Tempo total de sono',
+      snoring: 'Percentagem de roncopatia',
+      snoringTime: 'Tempo de roncopatia '
+    }
   },
 };

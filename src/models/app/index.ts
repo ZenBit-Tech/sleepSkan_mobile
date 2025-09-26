@@ -23,3 +23,9 @@ export interface IGlobalState {
   isConnected: boolean
   isInternetReachable: boolean
 }
+
+export enum RISK {
+  LOW = 'LOW',
+  HIGH = 'HIGH',
+  MODERATE = 'MODERATE'
+}

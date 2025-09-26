@@ -16,14 +16,14 @@ export enum AuthStack {
   LOGIN = 'login',
   SIGN_UP = 'sigUp',
   FORGOT_PAS = 'forgotPas',
-  NEW_PAS = 'newPas',
   CODE = 'code',
 }
 
 export enum MainStack {
   HOME = 'Home',
   RECORDING = 'Recording',
-  PRE_RECORDING = 'PreRecordingScreen'
+  PRE_RECORDING = 'PreRecordingScreen',
+  REPORT = 'SleepReportScreen'
 }
 
 export enum MainTabs {

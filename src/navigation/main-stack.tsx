@@ -10,13 +10,14 @@ import { MainStack} from '../constants';
 
 import { MainHomeScreen } from 'src/screens/home';
 import { SLOW_CLOSE, SLOW_OPEN, softCardInterpolator } from 'src/utils/navigation';
-import { RecordingScreen } from 'src/screens';
+import { RecordingScreen, SleepReportScreen } from 'src/screens';
 import { PreRecordingScreen } from 'src/screens/preRecording';
 
 export type MainStackList = {
   [MainStack.HOME]: undefined
   [MainStack.RECORDING]: undefined
   [MainStack.PRE_RECORDING]: undefined
+  [MainStack.REPORT]: undefined
 }
 
 const Stack = createStackNavigator<MainStackList>();
@@ -65,6 +66,7 @@ export const Main_Stack = () => {
       <Stack.Screen name={MainStack.HOME} component={MainHomeScreen} />
       <Stack.Screen name={MainStack.RECORDING} component={RecordingScreen} />
       <Stack.Screen name={MainStack.PRE_RECORDING} component={PreRecordingScreen} />
+      <Stack.Screen name={MainStack.REPORT} component={SleepReportScreen} />
     </Stack.Navigator>
   );
 };
