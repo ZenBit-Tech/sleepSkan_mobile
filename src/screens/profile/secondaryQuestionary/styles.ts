@@ -23,3 +23,7 @@ export const BTNS_CTR: ViewStyle = {
 export const PROGRESS_WRAP: ViewStyle = {
   width: 120,
 };
+
+export const CTR_HEIGHT: ViewStyle = {
+  height: 280,
+}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {  Pressable, StyleSheet, View, Platform, Alert } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -54,15 +54,17 @@ export const RecordingScreen = ({navigation}: StackScreenProps<MainStackList, Ma
 
   const { isRecording, startRecording, stopRecording, chunks, hasPermission } =
   useAudioRecorderCore({
+    autoStartRecording: false,
     defaultRecordingOptions: {
-      chunkSeconds: 90,
+      chunkSeconds: 900,
+      maxRecordingDuration: 43200
     },
-    onChunkReady: (chunk) => {
+    onChunkReady: async (chunk) => {
       setMyChunks(prev => [...prev, chunk])
       const fileName = chunk.path.split('/').pop() || `audio_${Date.now()}.aac`;
       user?.uid && uploadAudioToFirebase(
         chunk.path, 
-        fileName, 
+        fileName,
         user?.uid,
         () => setMyChunks(prev => prev.filter(c => c.path !== chunk.path))
       )
@@ -148,6 +150,9 @@ export const RecordingScreen = ({navigation}: StackScreenProps<MainStackList, Ma
       <View style={[S.CONTAINER, { paddingTop: insets.top }]}>
 
       <View>
+
+      {/* {isRecording && <Text color='red' style={{textAlign: 'right'}} preset='headerBold' text='RECORDING' />} */}
+
         <View style={S.CIRCLE}>
           {!start 
           ? <Text style={S.GOODNIGHT} tx='recording.goodNight' /> 

@@ -13,6 +13,7 @@ import { logoutFirebase } from 'src/services';
 
 interface IMainHeaderProps {
   withBack?: boolean;
+  withBurger?: boolean
   title?: string;
   rightButton?: string;
   rightIcon?: boolean;
@@ -29,11 +30,13 @@ interface IMainHeaderProps {
 
 const MainHeader: FC<IMainHeaderProps> = ({
   rightButton,
+  withBurger,
   rightIcon,
   withBack,
   small,
   withLogout,
   handleGoBack,
+  onRightIconPress
 }): JSX.Element => {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
@@ -48,30 +51,35 @@ const MainHeader: FC<IMainHeaderProps> = ({
         !!rightButton && S.CONTAINER_WITH_ICON,
       ]}
     >
-        {withBack && <TouchableOpacity
-          onPress={handleGoBack ? handleGoBack : handleBack}
-          style={S.BACK_CTR}
-        >
-          <SVGIcon name="arrowBack" size={24} color={colors.white} />
-        </TouchableOpacity>}
+      {withBack && <TouchableOpacity
+        onPress={handleGoBack ? handleGoBack : handleBack}
+        style={S.BACK_CTR}
+      >
+        <SVGIcon name="arrowBack" size={24} color={colors.white} />
+      </TouchableOpacity>}
 
-        <View style={S.CENTER_CTR}>
-          <Image
-            style={S.IMAGE_CTR}
-            resizeMode="contain"
-            source={HEADER_IMG}
-          />
-        </View>
+      <View style={S.CENTER_CTR}>
+        <Image
+          style={S.IMAGE_CTR}
+          resizeMode="contain"
+          source={HEADER_IMG}
+        />
+      </View>
 
-        {withLogout && <TouchableOpacity
-          onPress={() => logoutFirebase()}
-          style={S.LOGOUT_CTR}
-        >
-          <SVGIcon name="logout" size={24} color={colors.beige} />
-        </TouchableOpacity>}
+      {withLogout && <TouchableOpacity
+        onPress={() => logoutFirebase()}
+        style={S.LOGOUT_CTR}
+      >
+        <SVGIcon name="logout" size={24} color={colors.beige} />
+      </TouchableOpacity>}
+
+      {withBurger && <TouchableOpacity
+        onPress={onRightIconPress}
+        style={[S.LOGOUT_CTR, {width: 50, height: 50, top: 5}]}
+      >
+        <SVGIcon name="burger" size={50} color={colors.beige} />
+      </TouchableOpacity>}
     </View>
-
-    
   );
 };
 export default memo(MainHeader);

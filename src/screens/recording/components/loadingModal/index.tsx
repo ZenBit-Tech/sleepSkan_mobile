@@ -9,7 +9,7 @@ import Toast from 'react-native-toast-message';
 
 import { SVGIcon, Text } from 'src/components';
 import { ScrollView } from 'react-native-gesture-handler';
-import { uploadAudioToFirebase } from 'src/services';
+import { finishSession, uploadAudioToFirebase } from 'src/services';
 
 import * as S from './styles'
 import { CountdownTimer } from '../countDown';
@@ -33,8 +33,8 @@ export const LoadingModal = ({
 
   const [loading, setLoading] = useState<boolean>(true)
 
-  const handleFinish = () => {
-    console.log('Countdown finished');
+  const handleFinish = async () => {
+    await finishSession(userUid, 'devsession-1');
   };
 
   useEffect(() => {
@@ -51,11 +51,11 @@ export const LoadingModal = ({
     } else if (chunks.length === 0) {
       setTimeout(() => {
         handleFinish()
-      Toast.show({
-        type: 'success',
-        text1: 'Your data was successfully downloaded',
-      });
-      navHome()
+        Toast.show({
+          type: 'success',
+          text1: 'Your data was successfully downloaded',
+        });
+        navHome()
       }, 1000)
       
     }
@@ -78,20 +78,20 @@ export const LoadingModal = ({
   );
 };
 
-const styles = StyleSheet.create({
-  modalCtr: {
-    marginHorizontal: 16,
-    borderRadius: 16,
-    paddingBottom: 63
-  },
-  feedbackCard: {
-    marginTop: 32,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingBottom: 42
-  },
-  feedbackCardLabel: {
-    marginTop: 8,
-    fontWeight: '600',
-  }
-});
+// const styles = StyleSheet.create({
+//   modalCtr: {
+//     marginHorizontal: 16,
+//     borderRadius: 16,
+//     paddingBottom: 63
+//   },
+//   feedbackCard: {
+//     marginTop: 32,
+//     alignItems: 'center',
+//     justifyContent: 'center',
+//     paddingBottom: 42
+//   },
+//   feedbackCardLabel: {
+//     marginTop: 8,
+//     fontWeight: '600',
+//   }
+// });
