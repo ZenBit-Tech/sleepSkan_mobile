@@ -62,36 +62,18 @@ export const LoadingModal = ({
   }, [chunks, loading])
 
   return (
-      <ScrollView style={styles.modalCtr}>
-        <View style={{alignItems: 'center'}}>
-        <SVGIcon name='flashDrive' size={88} />
-        
-        <View style={{alignItems: 'center', gap: 12, marginTop: 20, paddingHorizontal: 20}}>
-        <Text style={S.CENTER_TEXT} preset='middleBold' tx='recording.loading' />
-          <Text style={S.CENTER_TEXT} preset='header4' tx='recording.keepOpen' />
-          <Text style={S.CENTER_TEXT} preset='header4' tx='recording.left' />
-          <CountdownTimer initialMinutes={10} onFinish={handleFinish} />
-        </View>
+      <ScrollView style={S.MODAL_CTR}>
+        <View style={S.CONTAINER}>
+          <SVGIcon name='flashDrive' size={88} />
+          
+          <View style={S.TEXT_CTR}>
+          <Text style={S.CENTER_TEXT} preset='middleBold' tx='recording.loading' />
+            <Text style={S.CENTER_TEXT} preset='header4' tx='recording.keepOpen' />
+            <Text style={S.CENTER_TEXT} preset='header4' tx='recording.left' />
+            <CountdownTimer initialMinutes={10} onFinish={handleFinish} />
+          </View>
       
         </View>
       </ScrollView>
   );
 };
-
-// const styles = StyleSheet.create({
-//   modalCtr: {
-//     marginHorizontal: 16,
-//     borderRadius: 16,
-//     paddingBottom: 63
-//   },
-//   feedbackCard: {
-//     marginTop: 32,
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//     paddingBottom: 42
-//   },
-//   feedbackCardLabel: {
-//     marginTop: 8,
-//     fontWeight: '600',
-//   }
-// });
