@@ -18,6 +18,7 @@ import info from './info';
 import hand from './hand';
 import logout from './logout';
 import flashDrive from './flashDrive';
+import burger from './burger';
 
 
 export const icons = {
@@ -40,7 +41,8 @@ export const icons = {
   info,
   hand,
   logout,
-  flashDrive
+  flashDrive,
+  burger
 };
 
 export type IconTypes = keyof typeof icons

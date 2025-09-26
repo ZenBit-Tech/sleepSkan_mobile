@@ -4,7 +4,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 
 import { colors } from 'src/theme';
-import { HEADER_IMG } from 'src/constants';
 import { logoutFirebase } from 'src/services';
 
 import { SVGIcon } from '../svg-icon';
@@ -37,7 +36,7 @@ const Header: FC<IMainHeaderProps> = ({
   withBack,
   withTitle,
   title,
-  handleGoBack
+  handleGoBack,
 }): JSX.Element => {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
@@ -67,7 +66,6 @@ const Header: FC<IMainHeaderProps> = ({
         >
           <SVGIcon name="logout" size={24} color={colors.beige} />
         </TouchableOpacity>}
-
     </View>
 
     
