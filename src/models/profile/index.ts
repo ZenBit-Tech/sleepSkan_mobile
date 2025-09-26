@@ -1,3 +1,4 @@
+import { RISK } from "../app"
 
 export interface IProfileState {
   error: string | null
@@ -22,7 +23,8 @@ export interface IProfile {
   stop_breathing?: boolean
   loud_snore?: boolean
   blood_pressure?: boolean
-  neck_size?: boolean
+  neck_size?: number
+  neck_size_check?: boolean
   //second questionary
   second_questionary?: number
   diabetes?: boolean
@@ -34,6 +36,11 @@ export interface IProfile {
   medicines?: number[]
   //scores
   score?: number
+  risk?: RISK
+  //recordings
+  recording?: boolean;
+  recording_results?: string;
+  pdf_file?: string;
 }
 
 export enum COFFEE_VARIANTS {

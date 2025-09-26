@@ -2,22 +2,24 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {  FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { StackScreenProps } from '@react-navigation/stack';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Screen, Text, Button, Modal } from 'src/components';
+import { Screen, Text, Button, Modal, Loader } from 'src/components';
 import { SVGIcon } from 'src/components/svg-icon';
 import { colors, typography } from 'src/theme';
 import { IconTypes } from 'src/components/svg-icon/icons';
 import { auth, profileInfo } from 'src/store/selectors';
 import { getUserInfo } from 'src/services/user';
+import { MainStack, SCREEN_HEIGHT, SCREEN_WIDTH } from 'src/constants';
+import Header from 'src/components/header';
+import { MainStackList } from 'src/navigation';
+import { clearFirebaseFolder } from 'src/services';
 
 import { getAlcoholColor, getAlcoholDescr1, getAlcoholDescr2, getCoffeeColor, getCoffeeDescr, getRiskColor, getRiskSubText, getRiskText, getSleepColor, getSleepDescr, getTobaccoColor, getTobaccoDescr, getWeightColor, getWeightDescr } from './components/helpers';
 import { InfoTooltip } from './components';
 import { FeedbackModal } from './components/feedbackModal';
-import { MainStack, SCREEN_HEIGHT, SCREEN_WIDTH } from 'src/constants';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Header from 'src/components/header';
-import { StackScreenProps } from '@react-navigation/stack';
-import { MainStackList } from 'src/navigation';
+
 
 export interface ICard {
   label: string; 
@@ -37,6 +39,7 @@ export const MainHomeScreen = ({ navigation }: StackScreenProps<MainStackList, M
   const [showTip, setShowTip] = useState(false);
 
   const [showModal, setShowModal] = useState<'tobacco' | 'sleep' | 'coffee' | 'alcohol' | 'medicine' | 'weight' | null>(null)
+  const [loading, setLoading] = useState<boolean>(false)
 
   const FEEDBACK_CARDS: ICard[] = [
     { label: t('home.tobacco'), name: 'tobacco', icon: 'tobacco', color: getTobaccoColor(user.profile?.tobacco), description: t(getTobaccoDescr(user.profile?.tobacco))},
@@ -47,14 +50,11 @@ export const MainHomeScreen = ({ navigation }: StackScreenProps<MainStackList, M
     { label: t('home.weight'), name: 'weight',icon: 'weight', color: getWeightColor(user.profile?.BMI), description: t(getWeightDescr(user.profile?.BMI))},
   ];
 
-
-
   useEffect(() => {
     authInfo.uid && getUserInfo(authInfo.uid)
   }, [authInfo])
 
   const score = useMemo(() => user.profile?.score ? user.profile?.score : 0.5, [user.profile?.score])
-  
 
   const getBtnText = () => {
     if (score && score <= 2) {
@@ -72,6 +72,13 @@ export const MainHomeScreen = ({ navigation }: StackScreenProps<MainStackList, M
       <Text preset="header4" style={[styles.feedbackCardLabel, { color: item.color }]}>{item.label}</Text>
     </TouchableOpacity>
   );
+
+  const handleNewRecording = async() => {
+    setLoading(true)
+    authInfo.uid && await clearFirebaseFolder(authInfo.uid)
+    setLoading(false)
+    navigation.navigate(MainStack.PRE_RECORDING)
+  }
 
   return (
     <Screen customHeader={<Header withLogout />}  preset={SCREEN_HEIGHT > 750 ? 'fixed' : 'scroll'}>
@@ -126,17 +133,26 @@ export const MainHomeScreen = ({ navigation }: StackScreenProps<MainStackList, M
         {/* Bottom Button */}
         {/* {getBtn()} */}
         {/* <View style={{maxHeight: score <= 2 ? 80 : 50}}> */}
-          <TouchableOpacity style={styles.bottomButtonArea} onPress={() => navigation.navigate(MainStack.PRE_RECORDING)}>
-            <Text text={getBtnText()} style={styles.outlinedButtonText}/>
-          </TouchableOpacity>
-          {/* <Button
-            preset="transparent"
-            text={getBtnText()}
-            style={styles.bottomButtonArea}
-            textStyle={styles.outlinedButtonText}
-            onPress={() => {}}
-          /> */}
-        {/* </View> */}
+          {user.profile?.recording 
+          ? <View>
+              <TouchableOpacity 
+                style={styles.bottomButtonArea} 
+                onPress={handleNewRecording}>
+                  {loading 
+                    ? <Loader /> 
+                    : <Text tx='home.newRecording' style={styles.outlinedButtonText}/>}
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={styles.bottomButtonArea} 
+                onPress={() => navigation.navigate(MainStack.REPORT)}>
+                <Text tx='home.reviewRecording' style={styles.outlinedButtonText}/>
+              </TouchableOpacity>
+            </View>
+          : <TouchableOpacity 
+              style={styles.bottomButtonArea} 
+              onPress={() => navigation.navigate(MainStack.PRE_RECORDING)}>
+              <Text text={getBtnText()} style={styles.outlinedButtonText}/>
+            </TouchableOpacity>}
       </View>
       {/* Feedback Modal */}
       <Modal 
@@ -159,7 +175,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     alignItems: 'center',
     paddingHorizontal: 24,
-    // paddingTop: SCREEN_HEIGHT > 750 ? 20 : 20,
     paddingBottom: 80
   },
   riskSection: {
@@ -197,13 +212,8 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   listComponentStyle: {
-    // flexDirection: 'row',
-    // flexWrap: 'wrap',
-    // justifyContent: 'center',
     gap: 15,
     marginBottom: 40,
-    borderColor: 'red',
-    borderWidth: 1
   },
   feedbackGrid: {
     flexDirection: 'row',
@@ -213,10 +223,6 @@ const styles = StyleSheet.create({
     marginBottom: 40
   },
   feedbackCard: {
-    // width: 108,
-    // height: 72,
-    // width: (SCREEN_WIDTH - 120 - 15)/2,
-    // height: ((SCREEN_WIDTH - 120 - 15)/2) * 0.65,
     width: (SCREEN_WIDTH - 120 - 15)/2,
     height: ((SCREEN_WIDTH - 120 - 15)/2) * 0.65,
     backgroundColor: colors.primary03,
@@ -232,8 +238,6 @@ const styles = StyleSheet.create({
     color: colors.white,
   },
   bottomButtonArea: {
-    // marginTop: 'auto',
-    // height: 40,
     borderColor: colors.white,
     borderWidth: 1,
     marginBottom: 20,
@@ -253,9 +257,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     width: 300,
     maxHeight: 60,
-    // borderColor: 'red',
-    //  borderWidth: 1
-    // maxHeight: 70,
   },
   outlinedButtonText: {
     color: colors.white,

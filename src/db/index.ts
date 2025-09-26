@@ -8,6 +8,7 @@ import {
 } from '@react-native-firebase/firestore';
 
 import dayjs from 'dayjs';
+import { RISK } from 'src/models';
 import { setProfile } from 'src/screens/profile/reducer';
 import { store } from 'src/store';
 
@@ -30,13 +31,17 @@ type UserData = {
   gender?: 'male' | 'female';
   height?: number;
   weight?: number;
-  neck?: boolean;
+  neck_size?: number;
   tired?: boolean;
   stop_breathing?: boolean;
   loud_snore?: boolean;
   blood_pressure?: boolean;
   score?: number;
-  BMI?: number
+  BMI?: number;
+  recording?: boolean;
+  risk?: RISK;
+  recording_results?: string;
+  pdf_file?: string;
 };
 
 export const defaultProfile: Omit<{email: string, name: string, createdAt: string}, 'id'> = {

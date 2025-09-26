@@ -1,3 +1,7 @@
+import { Platform } from "react-native"
+
 export const ONBOARDING_STEPS = 4
 export const FIRST_QUESTIONARY_STEPS = 8
 export const SECOND_QUESTIONARY_STEPS = 7
+
+export const IS_ANDROID = Platform.OS === 'android'
