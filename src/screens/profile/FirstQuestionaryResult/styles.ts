@@ -22,7 +22,7 @@ export const MAIN: ViewStyle = {
 
 export const TEXT_CENTER: TextStyle = {
   textAlign: 'center',
-  width: 320,
+  // width: 320,
 };
 
 export const BTNS_CTR: ViewStyle = {
@@ -31,3 +31,7 @@ export const BTNS_CTR: ViewStyle = {
   width: 170,
   alignSelf: 'center',
 };
+
+export const CTR_HEIGHT: ViewStyle = {
+  height: 300
+}

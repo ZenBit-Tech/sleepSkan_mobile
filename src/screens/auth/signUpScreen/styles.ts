@@ -1,4 +1,5 @@
 import { TextStyle, ViewStyle } from 'react-native';
+import { SCREEN_HEIGHT } from 'src/constants';
 
 import { spacing, typography } from 'src/theme';
 
@@ -6,7 +7,6 @@ export const CONTAINER: ViewStyle = {
   flex: 1,
   paddingHorizontal: 50,
   justifyContent: 'space-evenly',
-  paddingBottom: 30
 };
 
 export const LAYOUT_CTR: ViewStyle = {
@@ -19,10 +19,6 @@ export const LAYOUT: ViewStyle = {
   paddingTop: spacing[6],
 };
 
-// export const SCROLL: ViewStyle = {
-//   paddingHorizontal: spacing[5],
-// };
-
 export const SUB_TITLE_CTR: ViewStyle = {
   marginTop: spacing[2],
   marginBottom: 20,
@@ -30,7 +26,13 @@ export const SUB_TITLE_CTR: ViewStyle = {
 
 export const INPUTS_CTR: ViewStyle = {
   gap: 16,
+  height: 273,
+  justifyContent: 'center',
 };
+
+export const CTR: ViewStyle = {
+  height: SCREEN_HEIGHT > 750 ? 323 : 273,
+}
 
 export const CREATE_ACC_CTR: ViewStyle = {
   marginTop: 10,
@@ -42,16 +44,14 @@ export const CHECKBOX_CTR: ViewStyle = {
   gap: 12,
   alignItems: 'center',
   alignContent: 'center',
-  marginVertical: 25,
+  marginTop: 9,
 };
 
 export const CHECKBOX_TEXT_CTR: TextStyle = {
-  // width: '95%',
   alignSelf: 'flex-start',
 };
 
 export const CHECKBOX_TEXT_2_CTR: TextStyle = {
-  // width: '95%',
   alignSelf: 'flex-start',
   textDecorationLine: 'underline',
   fontFamily: typography.link
@@ -87,7 +87,6 @@ export const LINK_TEXT: TextStyle = {
 }
 
 export const TOP_TEXT_CTR: ViewStyle = {
-  gap: 11, 
   alignItems: 'center'
 }
 
@@ -95,7 +94,11 @@ export const CENTER_CTR: TextStyle = {
   alignItems: 'center'
 }
 
-export const BTN_CTR: ViewStyle = {
-  height: 50,
+export const BUTTON: ViewStyle = {
   width: 170
+}
+
+export const BTN_CTR: ViewStyle = {
+  alignItems: 'center', 
+  height: 50,
 }

@@ -4,7 +4,7 @@ import { colors } from 'src/theme';
 
 export const GAP: ViewStyle = {
   gap: 14,
-  paddingHorizontal: 40
+  paddingHorizontal: 22
 };
 
 export const BTNS_CTR: ViewStyle = {

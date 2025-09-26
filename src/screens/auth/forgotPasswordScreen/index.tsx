@@ -16,7 +16,6 @@ import { AuthStackList } from 'src/navigation';
 import * as S from './styles';
 
 
-
 type Form = {
   email: string
 }
@@ -25,13 +24,11 @@ export const ForgotPasswordScreen: FC<
   StackScreenProps<AuthStackList, AuthStack.FORGOT_PAS>
 > = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
-  // const dispatch = useAppDispatch();
-  // const { hasAcess } = useHasAccess();
 
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { errors , isValid},
   } = useForm<Form>({
     defaultValues: {
       email: '',
@@ -73,8 +70,8 @@ export const ForgotPasswordScreen: FC<
             tx="newPasswordScreen.forgotTitle"
           />
         </View>
+        <View style={S.CTR}>
           <View style={S.INPUTS_CTR}>
-
             <Controller
               name={'email'}
               control={control}
@@ -100,25 +97,26 @@ export const ForgotPasswordScreen: FC<
                 />
               )}
             />
-              <TouchableOpacity
-                  style={S.BACK_CTR}
-                  onPress={navToLogin}
-                >
-                  <Text
-                    preset="small"
-                    tx="newPasswordScreen.backToLogin"
-                    color={colors.white}
-                  />
-                </TouchableOpacity>
-                </View>
-                <View style={S.BUTTON_CTR}>
-                  <Button
-                    onPress={handleSubmit(onSubmit)}
-                    disabled={isLoading}
-                    style={S.BUTTON}
-                    preset="transparent"
-                    pending={isLoading}
-                    tx="common.send" />
+            <TouchableOpacity
+              style={S.BACK_CTR}
+              onPress={navToLogin}
+            >
+              <Text
+                preset="small"
+                tx="newPasswordScreen.backToLogin"
+                color={colors.white}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+        <View style={S.BUTTON_CTR}>
+          <Button
+            onPress={handleSubmit(onSubmit)}
+            disabled={isLoading || !isValid}
+            style={S.BUTTON}
+            preset="transparent"
+            pending={isLoading}
+            tx="common.send" />
               
           </View>
       </KeyboardAwareScrollView>

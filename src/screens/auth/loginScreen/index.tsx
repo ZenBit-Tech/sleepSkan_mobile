@@ -2,24 +2,21 @@ import React, { FC, useCallback, useState } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
 import { useForm, Controller } from 'react-hook-form';
-
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import Toast from 'react-native-toast-message';
 import { t } from 'i18next';
+
 import { Button, Input, Screen, Text } from 'src/components';
 import { AuthStack } from 'src/constants';
 import { colors } from 'src/theme';
 import { Patterns } from 'src/utils';
-// import { useAppDispatch } from 'src/store'
-// import { useHasAccess } from 'src/hooks'
-
-import * as S from './styles';
-// import { login } from '../reducer/actions'
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { signInWithEmail } from 'src/services';
-import Toast from 'react-native-toast-message';
 import { useAppDispatch } from 'src/store';
-import { setUid } from '../reducer';
 import { AuthStackList } from 'src/navigation';
 import MainHeader from 'src/components/mainHeader';
+
+import * as S from './styles';
+import { setUid } from '../reducer';
 
 type Form = {
   email: string
@@ -77,11 +74,9 @@ export const LoginScreen: FC<
     <Screen customHeader={<MainHeader />}>
         <KeyboardAwareScrollView showsVerticalScrollIndicator={false} contentContainerStyle={S.CONTAINER}>
           <View style={S.HEADING_CTR}>
-            <View style={{gap: 11, alignItems: 'center'}}>
-              {/* <Text text={t('loginScreen.subTitle')} preset="header" /> */}
               <Text text={t('loginScreen.title')} preset="headerBold" />
-            </View>
           </View>
+          <View style={S.CTR}> 
           <View style={S.INPUTS_CTR}>
             <Controller
               name={'email'}
@@ -147,19 +142,20 @@ export const LoginScreen: FC<
 
 
           </View>
-          <View>
-          <View style={S.BUTTON_CTR}>
-            <Button
-              onPress={handleSubmit(onSubmit)}
-              preset="transparent"
-              tx="common.signIn"
-              style={S.BUTTON}
-              disabled={isLoading || !isValid}
-              pending={isLoading}
-            />
-
           </View>
-          <Text style={S.NAV_TEXT}>
+          <View>
+            <View style={S.BUTTON_CTR}>
+              <Button
+                onPress={handleSubmit(onSubmit)}
+                preset="transparent"
+                tx="common.signIn"
+                style={S.BUTTON}
+                disabled={isLoading || !isValid}
+                pending={isLoading}
+              />
+
+            </View>
+            <Text style={S.NAV_TEXT}>
               <Text preset='small' tx='loginScreen.dontHaveAcc'/>
               <Text
                 preset='small' 
@@ -168,10 +164,7 @@ export const LoginScreen: FC<
                 onPress={navToSignUp}
               />
             </Text>
-            </View>
-          {/* <View style={S.CREATE_ACC_CTR}>
-            
-          </View> */}
+          </View>
         </KeyboardAwareScrollView>
       </Screen>
   );

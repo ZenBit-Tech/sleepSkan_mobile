@@ -4,7 +4,7 @@ import { TextStyle, ViewStyle } from 'react-native';
 export const CONTAINER: ViewStyle = {
   flex: 1,
   justifyContent: 'space-evenly',
-  // paddingHorizontal: 30,
+  paddingHorizontal: 36,
 };
 
 export const TEXT_CENTER: TextStyle = {
@@ -19,6 +19,10 @@ export const BTNS_CTR: ViewStyle = {
 };
 
 export const PROGRESS_WRAP: ViewStyle = {
-  // width: 120,
 marginTop: 50
 };
+
+export const CTR_HEIGHT: ViewStyle = {
+  height: 220,
+  justifyContent: 'center'
+}

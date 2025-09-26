@@ -60,7 +60,9 @@ const handleBack = () => {
       customHeader={<MainHeader withBack handleGoBack={handleBack}/>}
      >
       <View style={S.CONTAINER}>
-        <Text preset="middleBold" style={S.TEXT_CENTER} tx="profile.firstQuestionaryResult" />
+        <View style={S.CTR_HEIGHT}>
+          <Text preset="middleBold" style={S.TEXT_CENTER} tx="profile.firstQuestionaryResult" />
+        </View>
         <View style={S.BTNS_CTR}>
           <Button onPress={handleNext} preset="transparent" tx="common.next" />
         </View>

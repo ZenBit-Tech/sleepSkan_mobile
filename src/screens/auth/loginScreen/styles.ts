@@ -1,4 +1,5 @@
 import { ImageStyle, TextStyle, ViewStyle } from 'react-native';
+import { SCREEN_HEIGHT } from 'src/constants';
 
 import { spacing } from 'src/theme';
 
@@ -6,7 +7,6 @@ export const CONTAINER: ViewStyle = {
   flex: 1,
   paddingHorizontal: 50,
   justifyContent: 'space-evenly',
-  marginTop: -20,
 };
 
 export const IMAGE_CTR: ViewStyle = {
@@ -34,13 +34,17 @@ export const LAYOUT: ViewStyle = {
 };
 
 export const HEADING_CTR: ViewStyle = {
-  marginTop: spacing[2],
-  marginBottom: 20,
   alignItems: 'center',
 };
 
+export const CTR: ViewStyle = {
+  height: SCREEN_HEIGHT > 750 ? 323 : 273,
+}
+
 export const INPUTS_CTR: ViewStyle = {
   gap: 16,
+  height: 273,
+  justifyContent: 'center',
 };
 
 export const FORGOT_PASS_CTR: ViewStyle = {

@@ -24,7 +24,6 @@ export const INFO_ICON: ImageStyle = {
 
 export const ROW: ViewStyle = {
   flexDirection: 'row',
-  marginHorizontal: 40
 }
 
 export const BTN_HEIGHT: ViewStyle = {
