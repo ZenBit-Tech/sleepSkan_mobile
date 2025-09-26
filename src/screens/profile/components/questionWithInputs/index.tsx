@@ -14,13 +14,14 @@ interface IQuestionWithInputs {
   height: number | string |undefined,
   weight: number | undefined,
   setHeight: (height: number | string) => void,
-  setWeight: (weight: number) => void,
+  setWeight: (weight: number | undefined) => void,
 }
 
 export const QuestionWithInputs  = ({question, height, weight, setHeight, setWeight}: IQuestionWithInputs) => {
 const {t} = useTranslation();
 
 const [heightError, setHeightError] = useState<TxKeyPath | null>(null);
+const [weightText, setWeightText] = useState('');
 
 const handleChange = (text: string) => {
   const cleaned = text.replace(/[^0-9.]/g, '');
@@ -39,7 +40,7 @@ const handleChange = (text: string) => {
 const toCm = (s: string): number | null => {
   if (!s) return null;
   const x = Number(s.replace(',', '.'));
-  if (Number.isNaN(x)) return null;
+  if (Number.isNaN(x)) return 1;
   return s.includes('.') ? x * 100 : x;
 };
 
@@ -49,12 +50,20 @@ const handleBlur = () => {
   setHeightError(cm && cm < 50 ? 'errors.heightError' : null);
 };
 
+const onWeightChange = (value: string) => {
+  const v = value.replace(',', '.');
+  if (v === '') { setWeightText(''); setWeight(undefined); return; }
+  if (!/^\d*\.?\d*$/.test(v)) return;     // keep only digits + one dot
+  setWeightText(value);                    // keep original text
+  setWeight(v === '' ? undefined : Number(v));
+}
+
   return (
     <View style={S.GAP}>
       <Text preset="middleBold" style={S.TEXT_CENTER} tx={question.question} />
       <Input
         value={height?.toString()}
-        onChangeText={handleChange}
+        onChangeText={handleChange} 
         onBlur={handleBlur}
         placeholder={`${t('profile.height')}`}
         textContentType="oneTimeCode"
@@ -67,13 +76,13 @@ const handleBlur = () => {
       {!!heightError ? <Text preset='small' tx={heightError} style={S.ERROR_TEXT}/> : null}
       <Text preset="middleBold" style={S.TEXT_CENTER} tx={question.additionalQuestion} />
       <Input
-        value={weight?.toString()}
-        onChangeText={(value: string) => setWeight(Number(value))}
+        value={weightText}
+        onChangeText={onWeightChange}
         placeholder={`${t('profile.weight')}`}
         textContentType="oneTimeCode"
         autoCorrect={false}
         spellCheck={false}
-        keyboardType="numeric"
+        keyboardType="number-pad"
       />
     </View>
   );

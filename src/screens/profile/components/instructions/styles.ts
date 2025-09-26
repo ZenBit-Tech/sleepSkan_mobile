@@ -39,3 +39,7 @@ export const LIST_STYLE: ViewStyle = {
   paddingHorizontal: 12, 
   gap: 10
 }
+
+export const CTR_HEIGHT: ViewStyle = {
+  height: 240
+}

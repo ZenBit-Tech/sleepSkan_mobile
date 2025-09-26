@@ -1,23 +1,24 @@
 import React, { FC, useEffect, useMemo, useState } from 'react';
 import { StackScreenProps } from '@react-navigation/stack';
-import { ScrollView, View } from 'react-native';
-import { TxKeyPath } from 'src/i18n';
+import { KeyboardAvoidingView, Platform, View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import Toast from 'react-native-toast-message';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { TxKeyPath } from 'src/i18n';
 
 import { Button, Screen } from 'src/components';
 import {
   CompleteProfileStack,
-  OnboardingStack,
 } from 'src/constants';
 import { CompleteProfileStackList } from 'src/navigation/complete-profile-stack';
-
 import { auth, profileInfo } from 'src/store/selectors';
-// import { useTranslation } from 'react-i18next';
 import MainHeader from 'src/components/mainHeader';
 import ProgressBar from 'src/components/progressBar';
 import { FIRST_QUESTIONARY_STEPS } from 'src/constants/common';
 import { getUser, updateUser } from 'src/db';
 import { useAppDispatch } from 'src/store';
+
 
 import { setProfile } from '../reducer';
 import * as S from './styles';
@@ -27,14 +28,12 @@ import {
   QuestionWithInputs,
   QuestionWithDatepicker,
 } from '../components';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { handleFirebaseAuthError } from 'src/utils';
-import Toast from 'react-native-toast-message';
-import { useTranslation } from 'react-i18next';
+import { QuestionWithInput } from '../components/neck';
+
 
 
 export type IQuestion = {
-  type: 'inputs' | 'buttons' | 'datepicker' | 'instruction' | 'multiple',
+  type: 'inputs' | 'buttons' | 'datepicker' | 'instruction' | 'multiple' | 'neck',
   question: TxKeyPath,
   label: string,
   answers?: TxKeyPath[] | string[]
@@ -63,6 +62,7 @@ export const FirstQuestionary: FC<
   const [answer, setAnswer] = useState<string | boolean| undefined>(undefined);
   const [height, setHeight] = useState<number | string | undefined>(undefined);
   const [weight, setWeight] = useState<number | undefined>(undefined);
+  const [neck, setNeck] = useState<number | undefined>(undefined);
   const [date, setDate] = useState<Date | null>(null);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -139,15 +139,13 @@ export const FirstQuestionary: FC<
       answers: [],
       question: 'profile.question7_1',
     },
-    { type: 'buttons',
+    { type: 'neck',
       label: 'neck_size',
       question: 'profile.question10',
       answers: ['common.yes', 'common.no'],
-      fieldChange: {neck_size: answer},
-      action1Value: true,
-      action2Value: false,
+      fieldChange: {neck_size: neck},
     },
-  ], [answer, date, height, weight]);
+  ], [answer, date, height, weight, neck]);
 
   useEffect(() => {
    uid && getUser(uid).then((user) => {
@@ -171,39 +169,54 @@ export const FirstQuestionary: FC<
     }
   }, [profile?.first_questionary]);
 
-  const onboardingNav = () => navigation.navigate(OnboardingStack.STEP1);
-
   const renderQuestion = (question: IQuestion) => {
 
     if (question.type === 'datepicker') {
       return (
-        <QuestionWithDatepicker
-          question={question}
-          open={open}
-          date={date}
-          setOpen={setOpen}
-          setDate={setDate}
-        />
+        <View style={S.CTR_HEIGHT}>
+          <QuestionWithDatepicker
+            question={question}
+            open={open}
+            date={date}
+            setOpen={setOpen}
+            setDate={setDate}
+          />
+        </View>
       );
     } else if (question.type === 'buttons') {
       return (
-        <QuestionWithButtons
-          answer={answer}
-          question={question}
-          setAnswer={setAnswer}
-        />
+        <View style={S.CTR_HEIGHT}>
+          <QuestionWithButtons
+            answer={answer}
+            question={question}
+            setAnswer={setAnswer}
+          />
+        </View>
       );
     } else if (question.type === 'inputs') {
       return (
-        <QuestionWithInputs
-          question={question}
-          height={height}
-          weight={weight}
-          setHeight={setHeight}
-          setWeight={setWeight}
-        />
+        <View style={S.CTR_HEIGHT}>
+          <QuestionWithInputs
+            question={question}
+            height={height}
+            weight={weight}
+            setHeight={setHeight}
+            setWeight={setWeight}
+          />
+        </View>
       );
-    } else if (question.type === 'instruction') {
+    } else if (question.type === 'neck') {
+      return (
+        <View style={S.CTR_HEIGHT}>
+          <QuestionWithInput
+            question={question}
+            neck={neck}
+            setNeck={setNeck}
+          />
+        </View>
+      );
+    }
+      else if (question.type === 'instruction') {
       return (
         <RenderInstructions first={questionNumber === 8}/>
       );
@@ -291,46 +304,6 @@ const getCurrentStep = useMemo(() => {
 }, [questionNumber]);
 
   return (
-  //   questionNumber === 7 ? <KeyboardAwareScrollView 
-  //   contentContainerStyle={S.CONTAINER} 
-  //   showsVerticalScrollIndicator={false} 
-  //   extraScrollHeight={20}
-  //   enableOnAndroid
-  //   keyboardShouldPersistTaps="handled"
-  // >
-  //   <Screen
-  //     preset='scroll'
-  //     customHeader={<MainHeader 
-  //                     withBack  
-  //                     withLogout 
-  //                     handleGoBack={handleBack} />}
-  //                   >
-  //     <ProgressBar currentStep={getCurrentStep} steps={FIRST_QUESTIONARY_STEPS} withText />
-  //       <View style={S.CONTAINER}>
-  //      {renderQuestion(questions[questionNumber - 1] || 1)}
-
-  //       <View style={S.BTNS_CTR}>
-  //         <Button onPress={sendAnswer} preset="transparent" tx="common.next" />
-  //       </View>
-  //       </View>
-  //    </Screen>
-  //   </KeyboardAwareScrollView>
-  //   : <Screen
-  //     preset='scroll'
-  //     customHeader={<MainHeader 
-  //                     withBack  
-  //                     withLogout 
-  //                     handleGoBack={handleBack} />}
-  //                   >
-  //     <ProgressBar currentStep={getCurrentStep} steps={FIRST_QUESTIONARY_STEPS} withText={questionNumber !== 8 && questionNumber !== 9} />
-  //      <View style={S.CONTAINER}>
-  //       {renderQuestion(questions[questionNumber - 1] || 1)}
-
-  //       <View style={S.BTNS_CTR}>
-  //         <Button onPress={sendAnswer} preset="transparent" tx="common.next" pending={loading} disabled={loading}/>
-  //       </View>
-  //     </View>
-  //    </Screen>
     <Screen
       preset='scroll'
       customHeader={<MainHeader 
@@ -339,26 +312,30 @@ const getCurrentStep = useMemo(() => {
                       handleGoBack={handleBack} />}
                     >
       <ProgressBar currentStep={getCurrentStep} steps={FIRST_QUESTIONARY_STEPS} withText={questionNumber !== 8 && questionNumber !== 9} />
-      {questionNumber === 7 
-      ? <KeyboardAwareScrollView 
-        contentContainerStyle={S.CONTAINER} 
-        showsVerticalScrollIndicator={false} 
-        extraScrollHeight={20}
-        enableOnAndroid
-        keyboardShouldPersistTaps="handled"
-      >
-        
-       {renderQuestion(questions[questionNumber - 1] || 1)}
+      {(questionNumber === 7 || questionNumber === 10)
+      ?   <View style={{flex: 1}}>
+          <KeyboardAvoidingView
+            style={S.CONTAINER}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          >
+            {renderQuestion(questions[questionNumber - 1] || 1)}
+            <View style={S.BTNS_CTR}>
+              <Button onPress={sendAnswer} preset="transparent" tx="common.next" />
+            </View>
 
-        <View style={S.BTNS_CTR}>
-          <Button onPress={sendAnswer} preset="transparent" tx="common.next" />
-        </View>
-      </KeyboardAwareScrollView>
+          </KeyboardAvoidingView>
+      </View>
       : <View style={S.CONTAINER}>
-        {renderQuestion(questions[questionNumber - 1] || 1)}
+        
+          {renderQuestion(questions[questionNumber - 1] || 1)}
 
         <View style={S.BTNS_CTR}>
-          <Button onPress={sendAnswer} preset="transparent" tx="common.next" pending={loading} disabled={loading}/>
+          <Button 
+            onPress={sendAnswer} 
+            preset="transparent" 
+            tx="common.next" 
+            pending={loading} 
+            disabled={loading}/>
         </View>
       </View>}
      </Screen>

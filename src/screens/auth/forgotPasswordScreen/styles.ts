@@ -1,4 +1,5 @@
-import { TextStyle, ViewStyle } from 'react-native';
+import {TextStyle, ViewStyle } from 'react-native';
+import { SCREEN_HEIGHT } from 'src/constants';
 
 import { colors, spacing } from 'src/theme';
 
@@ -9,29 +10,33 @@ export const CONTAINER: ViewStyle = {
 };
 
 export const BUTTON: ViewStyle = {
-  width: 170
+  width: 170,
 }
 
 export const BUTTON_CTR: ViewStyle = {
   alignItems: 'center', 
-  height: 50
+  height: 87,
+  paddingBottom: 37
 }
 
 export const BACK_CTR: ViewStyle = {
   alignSelf: 'flex-end',
-  // marginVertical: spacing[4],
 };
 
 export const HEADING_CTR: ViewStyle = {
-  marginTop: spacing[2],
-  marginBottom: 20,
   alignItems: 'center',
 };
 
 export const INPUTS_CTR: ViewStyle = {
   gap: 16,
+  height: 273,
+  justifyContent: 'center',
 };
 
 export const CENTER_TEXT: TextStyle = {
   textAlign: 'center'
+}
+
+export const CTR: ViewStyle = {
+  height: SCREEN_HEIGHT > 750 ? 323 : 273,
 }

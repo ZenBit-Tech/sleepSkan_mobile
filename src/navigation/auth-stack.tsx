@@ -60,7 +60,6 @@ export const Auth_stack = () => {
         name={AuthStack.FORGOT_PAS}
         component={ForgotPasswordScreen}
       />
-      <Stack.Screen name={AuthStack.NEW_PAS} component={NewPasswordScreen} />
     </Stack.Navigator>
   );
 };

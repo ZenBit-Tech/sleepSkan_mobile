@@ -14,7 +14,9 @@ export const RenderInstructions  = ({first}: {first: boolean}) => {
   return (
 <View>
       {first ? (
-        <Text preset="middleBold" style={S.TEXT_CENTER} tx="profile.question8" />
+        <View style={S.CTR_HEIGHT}>
+          <Text preset="middleBold" style={S.TEXT_CENTER} tx="profile.question8" />
+        </View>
       ) : (
         <View style={S.INSTRUCTIONS_CONTAINER}>
           <Text preset="middleBold" style={[S.TEXT_CENTER, {lineHeight: 26}]} tx="profile.question9" />

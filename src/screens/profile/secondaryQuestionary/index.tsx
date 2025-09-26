@@ -3,6 +3,8 @@ import { StackScreenProps } from '@react-navigation/stack';
 import { View } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Toast from 'react-native-toast-message';
+import { useTranslation } from 'react-i18next';
 
 import { Button, Screen } from 'src/components';
 import {
@@ -11,7 +13,6 @@ import {
 } from 'src/constants';
 import { CompleteProfileStackList } from 'src/navigation/complete-profile-stack';
 import { auth, profileInfo } from 'src/store/selectors';
-import { useTranslation } from 'react-i18next';
 import MainHeader from 'src/components/mainHeader';
 import ProgressBar from 'src/components/progressBar';
 import { SECOND_QUESTIONARY_STEPS } from 'src/constants/common';
@@ -24,10 +25,8 @@ import {
   QuestionWithButtons,
   QuestionWithCheckboxes,
 } from '../components';
-import { BTNS_CTR, CONTAINER } from './styles';
+import { BTNS_CTR, CONTAINER, CTR_HEIGHT } from './styles';
 import { IQuestion } from '../firstQuestionary';
-
-
 
 
 export const SecondaryQuestionary: FC<
@@ -45,6 +44,7 @@ export const SecondaryQuestionary: FC<
   const [questionSecondaryNumber, setQuestionSecondaryNumber] = useState<number>(1);
   const [answerSecondary, setAnswerSecondary] = useState<string | boolean| undefined>(undefined);
   const [medicines, setMedicines] = useState<number[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const handleBack = () => {
     if (questionSecondaryNumber > 1) {
@@ -53,8 +53,6 @@ export const SecondaryQuestionary: FC<
       navigation.navigate(CompleteProfileStack.FIRST_QUESTIONARY_RESULT);
     }
   };
-
-  console.log('beginning', beginning)
 
   const questions: IQuestion[] = useMemo(() => [
     { type: 'buttons',
@@ -150,11 +148,13 @@ export const SecondaryQuestionary: FC<
 
     if (question.type === 'buttons') {
       return (
-        <QuestionWithButtons
-          answer={answerSecondary}
-          question={question}
-          setAnswer={setAnswerSecondary}
-        />
+        <View style={CTR_HEIGHT}>
+          <QuestionWithButtons
+            answer={answerSecondary}
+            question={question}
+            setAnswer={setAnswerSecondary}
+          />
+        </View>
       );
     } else if (question.type === 'multiple') {
       return (
@@ -168,19 +168,38 @@ export const SecondaryQuestionary: FC<
   };
 const sendAnswer = async() => {
   if (uid) {
-    await updateUser(uid, {
-      second_questionary: questionSecondaryNumber,
-      ...questions[questionSecondaryNumber - 1].fieldChange,
-    });
-    dispatch(setProfile({
-      ...profile,
-      second_questionary: questionSecondaryNumber,
-      ...questions[questionSecondaryNumber - 1].fieldChange}));
-      setAnswerSecondary(undefined);
-      setQuestionSecondaryNumber(questionSecondaryNumber + 1);
-      questionSecondaryNumber === 7 && navigation.navigate<any>('Main_Tabs', {
-        screen:MainTabs.HOME,
+    try {
+      setLoading(true)
+      await updateUser(uid, {
+        second_questionary: questionSecondaryNumber,
+        ...questions[questionSecondaryNumber - 1].fieldChange,
       });
+      dispatch(setProfile({
+        ...profile,
+        second_questionary: questionSecondaryNumber,
+        ...questions[questionSecondaryNumber - 1].fieldChange}));
+        setAnswerSecondary(undefined);
+        setQuestionSecondaryNumber(questionSecondaryNumber + 1);
+        questionSecondaryNumber === 7 && navigation.navigate<any>('Main_Tabs', {
+          screen:MainTabs.HOME,
+        });
+        setLoading(false)
+    } catch (error) {
+       //@ts-ignore
+       const message = error?.message || '';
+       if (message.includes('Unsupported field value: undefined')) {
+          Toast.show({
+            type: 'error',
+            text1: t('errors.requiredFieldMissing'),
+          });
+        } else {
+          Toast.show({
+            type: 'error',
+            text1: t('errors.wrong'),
+          });
+        }
+        setLoading(false)
+    }
   }
 };
 
@@ -194,7 +213,13 @@ const sendAnswer = async() => {
       <View style={[CONTAINER, {marginBottom: insets.bottom + 20}]}>   
        {renderQuestion(questions[questionSecondaryNumber - 1] || 1)}
         <View style={BTNS_CTR}>
-          <Button onPress={sendAnswer} preset="transparent" tx={questionSecondaryNumber === 7 ? "profile.getResults" : "common.next"} />
+          <Button 
+            onPress={sendAnswer} 
+            preset="transparent" 
+            pending={loading} 
+            disabled={loading}
+            tx={questionSecondaryNumber === 7 ? "profile.getResults" : "common.next"} 
+          />
         </View>
       </View>
      </Screen>

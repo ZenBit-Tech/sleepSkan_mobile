@@ -26,7 +26,7 @@ export const getScore = (profile: IProfile) => {
       (profile.loud_snore ? 1 : 0) +
       (profile.blood_pressure ? 1 : 0) +
       (profile.stop_breathing ? 1 : 0) +
-      (profile.neck_size ? 1 : 0);
+      ((profile.neck_size && profile.neck_size > 40) ? 1 : 0);
 
     return {BMI, score};
   };
