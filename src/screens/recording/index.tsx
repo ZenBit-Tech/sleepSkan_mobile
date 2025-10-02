@@ -56,7 +56,7 @@ export const RecordingScreen = ({navigation}: StackScreenProps<MainStackList, Ma
   useAudioRecorderCore({
     autoStartRecording: false,
     defaultRecordingOptions: {
-      chunkSeconds: 900,
+      chunkSeconds: 600,
       maxRecordingDuration: 43200
     },
     onChunkReady: async (chunk) => {
@@ -110,6 +110,10 @@ export const RecordingScreen = ({navigation}: StackScreenProps<MainStackList, Ma
   }
 
   useEffect(() => {
+    console.log('My chunks', myChunks)
+  }, [myChunks])
+
+  useEffect(() => {
     if (start) {
        activateKeepAwake()
        handleStart()
@@ -123,9 +127,12 @@ export const RecordingScreen = ({navigation}: StackScreenProps<MainStackList, Ma
   }, [start]);
 
   const openLoadingModal = () => {
+    stopRecording();
+    deactivateKeepAwake()
+    setStart(false);
     setShowStopModal(false);
-    handleStopRecording()
-    setTimeout(() => setShowLoadingModal(true), 500);
+    // handleStopRecording()
+    setTimeout(() => setShowLoadingModal(true), 1000);
   };
 
   const handleStartRecording = async () => {
@@ -135,13 +142,6 @@ export const RecordingScreen = ({navigation}: StackScreenProps<MainStackList, Ma
       setShowStopModal(true);
     }
   };
-
-  const handleStopRecording = () => {
-    
-    setStart(false);
-    stopRecording();
-    deactivateKeepAwake()
-  }
 
   const timer = new Date(seconds * 1000).toISOString().substr(11, 8);
   
@@ -167,7 +167,7 @@ export const RecordingScreen = ({navigation}: StackScreenProps<MainStackList, Ma
         <Text preset='header4bold' style={S.INSTRUCTION} tx='recording.putPhone' />
       </View> 
       <Pressable style={S.BUTTON} onPress={handleStartRecording}>
-        <Text style={S.BTN_TEXT} tx={start ? 'recording.startRecording' : 'recording.stopRecording'} />
+        <Text style={S.BTN_TEXT} tx={!start ? 'recording.startRecording' : 'recording.stopRecording'} />
       </Pressable>
     </View>
 
