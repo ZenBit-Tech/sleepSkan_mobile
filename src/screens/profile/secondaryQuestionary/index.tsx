@@ -148,7 +148,7 @@ export const SecondaryQuestionary: FC<
 
     if (question.type === 'buttons') {
       return (
-        <View style={CTR_HEIGHT}>
+        <View style={[CTR_HEIGHT, question.buttonsCount === 2 && {paddingBottom: 55}]}>
           <QuestionWithButtons
             answer={answerSecondary}
             question={question}

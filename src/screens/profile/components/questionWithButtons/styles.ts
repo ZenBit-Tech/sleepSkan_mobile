@@ -18,8 +18,8 @@ export const TEXT_CENTER: TextStyle = {
 };
 
 export const INFO_ICON: ImageStyle = {
-  marginTop: 12,
-  marginRight: 7,
+  marginTop: 4,
+  marginRight: 8,
 }
 
 export const ROW: ViewStyle = {
@@ -27,5 +27,6 @@ export const ROW: ViewStyle = {
 }
 
 export const BTN_HEIGHT: ViewStyle = {
-  height: 30
+  height: 20,
+  marginRight: 5
 }

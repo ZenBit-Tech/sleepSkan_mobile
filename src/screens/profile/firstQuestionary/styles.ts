@@ -23,6 +23,7 @@ marginTop: 50
 };
 
 export const CTR_HEIGHT: ViewStyle = {
-  height: 220,
-  justifyContent: 'center'
+  height: 280,
+  justifyContent: 'flex-end',
+  paddingBottom: 55
 }

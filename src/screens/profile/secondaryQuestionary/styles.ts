@@ -26,4 +26,5 @@ export const PROGRESS_WRAP: ViewStyle = {
 
 export const CTR_HEIGHT: ViewStyle = {
   height: 280,
+  justifyContent: 'flex-end'
 }
