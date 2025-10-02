@@ -14,7 +14,7 @@ import { getUserInfo } from 'src/services/user';
 import { MainStack, SCREEN_HEIGHT, SCREEN_WIDTH } from 'src/constants';
 import Header from 'src/components/header';
 import { MainStackList } from 'src/navigation';
-import { clearFirebaseFolder } from 'src/services';
+import { clearFirebaseFolder, finishSession } from 'src/services';
 
 import { getAlcoholColor, getAlcoholDescr1, getAlcoholDescr2, getCoffeeColor, getCoffeeDescr, getRiskColor, getRiskSubText, getRiskText, getSleepColor, getSleepDescr, getTobaccoColor, getTobaccoDescr, getWeightColor, getWeightDescr } from './components/helpers';
 import { InfoTooltip } from './components';
@@ -74,9 +74,9 @@ export const MainHomeScreen = ({ navigation }: StackScreenProps<MainStackList, M
   );
 
   const handleNewRecording = async() => {
-    setLoading(true)
-    authInfo.uid && await clearFirebaseFolder(authInfo.uid)
-    setLoading(false)
+    // setLoading(true)
+    // authInfo.uid && await clearFirebaseFolder(authInfo.uid)
+    // setLoading(false)
     navigation.navigate(MainStack.PRE_RECORDING)
   }
 

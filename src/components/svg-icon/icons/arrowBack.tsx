@@ -7,7 +7,7 @@ function SvgComponent(props: SvgProps) {
       <Path
         fill={props.color}
         stroke={props.color}
-        stroke-width={1}
+        strokeWidth={2}
         stroke-linecap="round"
         stroke-linejoin="round"
         d="M13 25L0.999999 13M0.999999 13L13 1M0.999999 13L25 13"

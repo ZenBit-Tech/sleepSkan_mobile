@@ -11,6 +11,7 @@ module.exports = {
         safe: true,
         allowUndefined: false,
       },
+      'react-native-worklets/plugin',
     ],
     [
       'module-resolver',

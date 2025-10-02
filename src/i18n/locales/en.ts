@@ -193,7 +193,7 @@ export default {
       yellow2WeightDescr: 'Your BMI falls within the overweight range. Excess weight, particularly around the neck and abdomen, can increase the risk of obstructive sleep apnea. If you’re experiencing symptoms like loud snoring or daytime fatigue, this may be contributing. Modest weight loss (even 5–10%) can lead to meaningful improvements in breathing during sleep.',
       redWeightDescr: 'Your BMI is in the obese range, which is a known risk factor for obstructive sleep apnea. Fat deposits around the airway can impair airflow during sleep. Sleep apnea is more common and often more severe in individuals with obesity. We recommend discussing a personalized management plan with a healthcare provider, even small steps toward weight reduction can make a significant difference.',
       redMedicineDescr: 'O(s) medicamento(s) que assinalou pertencem a classes que podem afetar a respiração ou a qualidade do sono, aumentando o risco de apneia.',
-      greenMedicineDescr: 'Within normal range',
+      greenMedicineDescr: 'Sem medicação de risco reportada: \nNão indicou o uso de medicamentos que possam afetar a respiração ou a arquitetura do sono. Isto é um bom sinal para a sua saúde respiratória noturna!',
       buttonText: 'Discover Your Snoring Profile Tonight',
       redButtonText: 'Record your Snoring Tonight',
       yellowBtnText: 'Prosseguir para a  análise acústica',
@@ -233,7 +233,16 @@ export default {
       snoreIntensity: 'Peak Snore Intensity',
       sleepTime: 'Total Sleep Time',
       snoring: 'Snoring',
-      snoringTime: 'Snoring Time'
+      snoringTime: 'Snoring Time',
+      detection: 'Snore Detection',
+      downloadPDF: 'Relatório PDF ',
+      checkSnore: 'Obter prescrição médica para estudo do sono',
+      orderEvaluation: 'Encomendar estudo do sono',
+      docAppointment: 'Marcar consulta médica',
+      construction: 'This page is still under construction.',
+      prescription: ' If you’re interested in requesting a prescription for a sleep test, click below and we’ll notify you as soon as it’s available.',
+      noticeBtn: 'Notify Me When Available',
+      physician: 'If you’re interested in speaking to a physician, click below and we’ll notify you as soon as it’s available.'
     }
   },
 };

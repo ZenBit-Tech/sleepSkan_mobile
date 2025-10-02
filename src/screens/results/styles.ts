@@ -10,6 +10,12 @@ export const CONTAINER: ViewStyle = {
   paddingHorizontal: 18
 }
 
+export const TAB: TextStyle = {
+    fontSize: 14,
+    fontWeight: '700',
+    letterSpacing: 0.6,
+}
+
 export const TABS_ROW: ViewStyle = {
   flexDirection: 'row',
   justifyContent: 'space-around',
@@ -30,15 +36,6 @@ export const RISK_LEVEL_FILL: ViewStyle = {
   borderRadius: 16,
 }
 
-export const STAT_CARD: ViewStyle = {
-    width: CARD_SIDE,
-    height: 128,
-    borderRadius: 16,
-    padding: 9,
-    gap: 7,
-    justifyContent: 'center',
-}
-
 export const GRID: ViewStyle = {
     marginTop: 26,
     marginBottom: 50,
@@ -54,4 +51,30 @@ export const TITLE: TextStyle = {
 
 export const CENTER_TEXT: TextStyle = {
   textAlign: 'center'
+}
+
+export const DESCR_CTR: ViewStyle = {
+  marginTop: 12, 
+  paddingHorizontal: 18
+}
+
+export const CHART_CTR: ViewStyle = {
+  // flex: 1, 
+  backgroundColor: colors.greyLight, 
+  marginTop: 10, 
+  borderRadius: 16, 
+  height: 376, 
+  justifyContent: 'center'
+}
+
+export const CHART_TITLE: TextStyle = {
+  textAlign: 'center', 
+  marginVertical: 11
+}
+
+export const MODAL_WRAPPER: ViewStyle = {
+  paddingHorizontal: 41,
+  borderRadius: 16,
+  maxHeight: '90%',
+  paddingVertical: 32
 }

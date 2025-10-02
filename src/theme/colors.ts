@@ -8,6 +8,7 @@ export const colors = {
   primary03: ' rgba(52, 108, 148, 0.3)',
   primary04: ' rgba(52, 108, 148, 0.4)',
   inactive: ' rgba(172, 185, 197, 0.4)',
+  darkText: '#0D2622',
   black: '#000',
   white: '#FFF',
   textColor: '#060E18',

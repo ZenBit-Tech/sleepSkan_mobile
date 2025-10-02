@@ -74,13 +74,13 @@ export default {
       invalidEmail: "E-mail inválido",
       accountDisabled: "A sua conta foi desativada.",
       userMismatch: "Por favor, inicie sessão com a conta correta.",
-      weakPassword: 'Palavra-passe fraca. Escolha uma palavra-passe mais forte.',
+      weakPassword: 'Palavra-passe fraca. Use pelo menos 6 caracteres.',
       emailInUse: "Este utilizador já existe. por favor, faça o login",
       networkError: "Erro de rede. Verifique a sua ligação.",
       operationNotAllowed: "Operação não permitida. Contacte o suporte.",
       requiresRecentLogin: "Efetue novamente o login para realizar esta ação.",
       accountExistsWithDifferentCredential: "O utilizador já existe, faça login.",
-      requiredFieldMissing: 'You have not selected any answer'
+      requiredFieldMissing: 'Não selecionou nenhuma resposta'
     },
     profile: {
       startTitle: 'Bem-Vindo(a), {{name}}!',
@@ -162,7 +162,7 @@ export default {
       yellow2WeightDescr: 'O seu IMC (Índice de massa corporal) encontra-se na faixa de excesso de peso. \nO excesso de peso, especialmente na zona do pescoço e abdómen, pode aumentar o risco de apneia obstrutiva do sono. \nSe apresenta sintomas como ressonar intenso ou fadiga durante o dia, este fator pode estar a contribuir. \nUma perda de peso modesta (mesmo entre 5–10%) pode trazer melhorias significativas na respiração durante o sono.',
       redWeightDescr: 'O seu IMC  (Índice de massa corporal) encontra-se na faixa de obesidade, um fator de risco conhecido para a apneia obstrutiva do sono. \n A acumulação de gordura na região do pescoço pode comprometer a passagem de ar durante o sono. A apneia do sono é mais frequente e muitas vezes mais grave em pessoas com obesidade. \n Recomendamos que discuta um plano de acompanhamento personalizado com um profissional de saúde. Mesmo uma redução modesta de peso pode ter um impacto significativo na sua respiração durante o sono.',
       redMedicineDescr: 'O(s) medicamento(s) que assinalou pertencem a classes que podem afetar a respiração ou a qualidade do sono, aumentando o risco de apneia.',
-      greenMedicineDescr: 'Within normal range',
+      greenMedicineDescr: 'Sem medicação de risco reportada: \nNão indicou o uso de medicamentos que possam afetar a respiração ou a arquitetura do sono. Isto é um bom sinal para a sua saúde respiratória noturna!',
       buttonText: 'Descubra o seu padrão respiratório esta noite',
       redButtonText: 'Grave a sua respiração esta noite',
       yellowBtnText: 'Prosseguir para a  análise acústica',
@@ -189,7 +189,7 @@ export default {
       reason3: 'Utilização recente (últimas 24h) de medicamentos para dormir, ansiedade ou alergias',
       reason4: 'Estes fatores podem interferir com a respiração noturna e comprometer a precisão da análise',
       reason5: ' Para garantir resultados fiáveis, só deve prosseguir com a gravação quando estiver no seu estado habitual de saúde',
-      notice: 'Notice',
+      notice: 'Aviso',
       interrupt: 'Tem a certeza de que deseja interromper a gravação?',
       lost: 'Os dados já registados serão perdidos.',
       continue: 'Continuar a gravação',
@@ -210,7 +210,16 @@ export default {
       snoreIntensity: 'Intensidade máxima de ronco',
       sleepTime: 'Tempo total de sono',
       snoring: 'Percentagem de roncopatia',
-      snoringTime: 'Tempo de roncopatia '
+      snoringTime: 'Tempo de roncopatia ',
+      detection: 'Monitorização do sono',
+      downloadPDF: 'Relatório PDF ',
+      checkSnore: 'Obter prescrição médica para estudo do sono',
+      orderEvaluation: 'Encomendar estudo do sono',
+      docAppointment: 'Marcar consulta médica',
+      construction: 'Esta página ainda está em construção.',
+      prescription: ' Se estiver interessado em solicitar uma prescrição para um estudo do sono, clique abaixo e será notificado assim que esta função estiver disponível.',
+      noticeBtn: 'Notifique-me quando estiver disponível',
+      physician: 'Se estiver interessado em falar com um médico, clique abaixo e será notificado assim que esta função estiver disponível.'
     }
   },
 };

@@ -57,16 +57,16 @@ export const Main_Stack = () => {
         transitionSpec: { open: SLOW_OPEN, close: SLOW_CLOSE },
       }}
     >
-      {/* {!isProfileCompleted && (
-        <Stack.Screen
-          name={MainStack.COMLETE_PROFILE_STACK}
-          component={Complete_profile_stack}
-        />
-      )} */}
       <Stack.Screen name={MainStack.HOME} component={MainHomeScreen} />
       <Stack.Screen name={MainStack.RECORDING} component={RecordingScreen} />
       <Stack.Screen name={MainStack.PRE_RECORDING} component={PreRecordingScreen} />
-      <Stack.Screen name={MainStack.REPORT} component={SleepReportScreen} />
+      <Stack.Screen 
+        name={MainStack.REPORT} 
+        component={SleepReportScreen} 
+        options={{
+          gestureEnabled: false,          
+        }}
+      />
     </Stack.Navigator>
   );
 };
