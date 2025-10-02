@@ -20,8 +20,9 @@ export const BurgerModal = ({onClose, onDownload, setDesiredService, onModalOpen
   const handleNoticeModalOpen = (desiredService: 'doctor_appointment' | 'prescription' | undefined) => {
     setDesiredService(desiredService)
     onClose()
-    onModalOpen()
+    setTimeout(() => onModalOpen(), 500) 
   }
+  
     return (
         <Modal
           isVisible={showBurgerModal}

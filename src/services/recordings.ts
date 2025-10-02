@@ -123,7 +123,6 @@ export const finishSession = async (
         pdf_file: data?.pdfReport?.filePath || '',
       });
 
-      console.log('✅ finishSession OK', data);
       return data;
     } catch (e) {
       clearTimeout(timeout);
@@ -256,8 +255,6 @@ export async function saveToUserLocation(localPath: string, fileName = 'Report.p
       ? `file://${localPath}`
       : localPath;
 
-      console.log('URI', uri)
-
   try {
     await Share.open({
       url: uri,
@@ -270,5 +267,17 @@ export async function saveToUserLocation(localPath: string, fileName = 'Report.p
     } as any);
   } catch (e) {
     console.warn('Share/save failed:', e);
+    if (Platform.OS === 'ios') {
+      try {
+        const b64 = await RNFS.readFile(uri.replace('file://', ''), 'base64');
+        await Share.open({
+          url: `data:application/pdf;base64,${b64}`,
+          type: 'application/pdf',
+          filename: fileName,
+          failOnCancel: false,
+          saveToFiles: true,
+        } as any);
+      } catch {}
+    }
   }
 }

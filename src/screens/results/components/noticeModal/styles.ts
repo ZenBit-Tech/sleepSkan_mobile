@@ -1,4 +1,5 @@
 import { ImageStyle, TextStyle, ViewStyle } from "react-native";
+import { IS_ANDROID } from "src/constants/common";
 
  export const IMAGE_CTR: ImageStyle = {
     width: 50,
@@ -13,6 +14,7 @@ import { ImageStyle, TextStyle, ViewStyle } from "react-native";
     alignItems: 'center', 
     marginTop: 42, 
     minHeight: 65, 
+    marginBottom: IS_ANDROID ? 0 : 63,
     width: 220
   }
 

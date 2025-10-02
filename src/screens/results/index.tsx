@@ -77,7 +77,6 @@ export const SleepReportScreen = () => {
       const response = fetchSessionJson(authInfo.uid)
       
       response.then((res) => {
-        console.log('Response', res)
         // const target = Math.max(400, Math.min(1200, Math.floor(chartWidth))); // pick a cap
         // const sampled = downsampleLTTB(res.points, target); // or downsampleLTTB(res.points, target)
         // const data = sampled.map((v: number) => ({ value: v + 94 }));
@@ -133,7 +132,7 @@ export const SleepReportScreen = () => {
 
   const handleDownload = async() => {
     const filePath = user.profile?.pdf_file && await downloadReportPdf({ path: user.profile?.pdf_file });
-    saveToUserLocation(filePath!, 'SleepScan_Report.pdf')
+    setTimeout(() => saveToUserLocation(filePath!, 'SleepScan_Report.pdf'), 500)
     setShowBurgerModal(false)
   }
 //   const peaks = findPeaks(resultsData.map(r=> r.value), { minHeight: threshold, distance: 3 }); // tune distance
