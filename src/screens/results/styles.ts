@@ -62,9 +62,12 @@ export const CHART_CTR: ViewStyle = {
   // flex: 1, 
   backgroundColor: colors.greyLight, 
   marginTop: 10, 
-  borderRadius: 16, 
+  borderTopLeftRadius: 16, 
+  borderBottomLeftRadius: 16, 
+  marginRight: -15,
   height: 376, 
-  justifyContent: 'center'
+  justifyContent: 'center',
+  marginBottom: 45
 }
 
 export const CHART_TITLE: TextStyle = {

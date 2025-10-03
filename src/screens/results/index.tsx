@@ -1,13 +1,18 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   View,
   Platform,
   InteractionManager,
+  ScrollView,
+  StyleSheet,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import {LineChart} from 'react-native-gifted-charts';
+// import {LineChart} from 'react-native-gifted-charts';
 import { useFocusEffect } from '@react-navigation/native';
+//@ts-ignore
+import { LineChart } from 'react-native-charts-wrapper';
+import { processColor } from 'react-native';
  
 import { Loader, MainHeader, Modal, Screen, Text } from 'src/components';
 import { colors } from 'src/theme';
@@ -15,14 +20,16 @@ import { RISK } from 'src/models';
 import { auth as authSelector, profileInfo } from 'src/store/selectors';
 import { getUserInfo } from 'src/services/user';
 import { TxKeyPath } from 'src/i18n';
-import { downloadReportPdf, fetchSessionJson, saveToUserLocation } from 'src/services';
-import { countSnorePercentage, downsampleMinMax, findPeaks, secondsToHM } from 'src/utils';
+import { downloadPdfToDevice, fetchSessionJson } from 'src/services';
+import { countSnorePercentage, downsampleMinMax, secondsToHM } from 'src/utils';
 import { SCREEN_WIDTH } from 'src/constants';
+import { IS_ANDROID } from 'src/constants/common';
 
 import * as S from './styles'
 import { StatCard } from './components/card';
 import { BurgerModal } from './components/burgerModal';
 import { NoticeModal } from './components/noticeModal';
+
 
 const snorePerMin = 2
 const avgIntervalSec = 34
@@ -44,7 +51,23 @@ export const SleepReportScreen = () => {
   const [desiredService, setDesiredService] = useState<'doctor_appointment' | 'prescription' | undefined>(undefined)
   const [mmIdx, setMmIdx] = useState<number[]>([])
 
-  const chartWidth = useMemo(() => SCREEN_WIDTH - 73, [SCREEN_WIDTH])
+  const chartWidth = useMemo(() => 2*SCREEN_WIDTH, [SCREEN_WIDTH])
+
+
+  //===============react-native-charts-wrapper=====
+
+  const lineValues = useMemo(
+    () => resultsData.map((p, i) => ({ x: i, y: p.value })),
+    [resultsData]
+  );
+
+  const chartRef = useRef(null);
+  const isIOS = Platform.OS === 'ios';
+  const VISIBLE_POINTS = 35000;
+  // start from 30 on the Y axis
+  const Y_MIN = 30;
+
+  //===============end=====
 
   useEffect(() => {
     authInfo.uid && getUserInfo(authInfo.uid)
@@ -67,8 +90,6 @@ export const SleepReportScreen = () => {
         return () => cancelAnimationFrame(id);
       }
     }, [chartWidth, resultsData.length]);
-
-    // let peaksSet: any
     
 
   useEffect(() => {
@@ -77,23 +98,10 @@ export const SleepReportScreen = () => {
       const response = fetchSessionJson(authInfo.uid)
       
       response.then((res) => {
-        // const target = Math.max(400, Math.min(1200, Math.floor(chartWidth))); // pick a cap
-        // const sampled = downsampleLTTB(res.points, target); // or downsampleLTTB(res.points, target)
-        // const data = sampled.map((v: number) => ({ value: v + 94 }));
 
         const { values: mmVals, indices: mmIdxData } = downsampleMinMax(res.points, Math.floor(chartWidth / 2));
 
         const data = mmVals.map(v => ({ value: v + 94}));
-
-        // //   // customDataPoint: (v+94) >= threshold ? () => (
-        // //   //   <View
-        // //   //     style={{
-        // //   //       width: 6, height: 6, borderRadius: 3,
-        // //   //       backgroundColor: colors.textColor, borderWidth: 1, borderColor: colors.textColor,
-        // //   //     }}
-        // //   //   />
-        // //   // ) : undefined,
-        // }));
         setTotalSleep(res.totalSeconds)
         setTotalSnore(res.totalSnoringSec)
         setPeak(res.peakSnore)
@@ -131,14 +139,12 @@ export const SleepReportScreen = () => {
   const canRender = chartWidth > 0 && resultsData.length > 0 && ready;
 
   const handleDownload = async() => {
-    const filePath = user.profile?.pdf_file && await downloadReportPdf({ path: user.profile?.pdf_file });
-    setTimeout(() => saveToUserLocation(filePath!, 'SleepScan_Report.pdf'), 500)
+    setTimeout(() => user.profile?.pdf_file && downloadPdfToDevice(user.profile?.pdf_file, 'SleepScan_Report.pdf'), 100)
     setShowBurgerModal(false)
   }
-//   const peaks = findPeaks(resultsData.map(r=> r.value), { minHeight: threshold, distance: 3 }); // tune distance
-//   const peaksSet = new Set(peaks);
-//   const keptIdx = mmIdx; // or: the original indices that LTTB kept (if you modify LTTB to return them)
-// const peakMask = keptIdx.map(i => peaksSet.has(i));
+
+const scrollRef = useRef<ScrollView>(null);
+const yTicks = Array.from({ length: 10 + 1 }, (_, i) => 30 + i * 5);
 
   return (
     <Screen 
@@ -172,41 +178,115 @@ export const SleepReportScreen = () => {
         </View>
 
         {/* Chart */}
-        <View style={S.CHART_CTR} pointerEvents="none" onStartShouldSetResponderCapture={() => true}>
+        <View style={S.CHART_CTR} >
           <Text preset='smallBold' tx='results.detection' color={colors.textColor} style={S.CHART_TITLE} />
           {canRender
-          ? <LineChart
-            key={`${chartWidth}-${resultsData.length}-${nonce}`} 
-            width={chartWidth}
-            height={300}
-            data={resultsData}
-            adjustToWidth
-            initialSpacing={0}
-            endSpacing={0}  
-            thickness={1}
-            color={colors.primary}
-            areaChart
-            startFillColor={colors.primary}
-            endFillColor1={colors.primary}
-            startOpacity={0.8}
-            endOpacity={0.1}
-            dataPointsRadius={0} 
-            isAnimated={false}
-            animationDuration={0}
-            hideDataPoints
-            // customDataPoint={(_point: { value: number }, i: number) =>
-            //   peakMask[i] ? (
-            //   <View style={{
-            //     width: 8, height: 8, borderRadius: 4,
-            //     backgroundColor: 'red', borderWidth: 2, borderColor: '#346C94'
-            //   }} />
-            //   ) : null
-            // }
-              // X axis: 1, 2, 3, ...
-            // xAxisLabelTexts={labels}
-            // xAxisLabelsHeight={24}
-            />
-            : <Loader size={50}/> }
+          ? <ScrollView
+            ref={scrollRef}
+            horizontal
+            showsHorizontalScrollIndicator={true}
+          >
+          <LineChart
+          style={{ height: 300, width: SCREEN_WIDTH *2 }}
+    
+          chartDescription={{ text: '' }}
+          legend={{ enabled: false }}
+    
+          data={{
+            dataSets: [
+              {
+                values: lineValues,
+                label: '',
+                config: {
+                  drawValues: false,
+                  lineWidth: 1,
+                  mode: 'CUBIC_BEZIER',
+                  drawCircles: false,
+                  color: processColor(colors.primary),
+    
+                  // area fill
+                  drawFilled: true,
+                  fillColor: processColor(colors.primary),
+                  fillAlpha: 80,
+                },
+              },
+            ],
+          }}
+    
+          xAxis={{
+            position: 'BOTTOM',
+            drawGridLines: false,
+            drawAxisLine: false,
+            granularityEnabled: true,
+            granularity: 1,
+            textColor: processColor(colors.greyDark_06),
+            // optional: hide x labels entirely
+            drawLabels: false,
+          }}
+    
+          yAxis={{
+            left: {
+              axisMinimum: Y_MIN,
+              drawGridLines: true,
+              textColor: processColor(colors.black),
+              axisLineColor: processColor(colors.greyDark_06),
+              axisLineWidth: StyleSheet.hairlineWidth,
+            },
+            right: { enabled: false },
+          }}
+    
+          // keep Y labels visible; pan/zoom happens inside the chart view
+          dragEnabled={true}
+          scaleXEnabled={true}
+          scaleYEnabled={false}
+          pinchZoom={false}
+          doubleTapToZoomEnabled={false}
+          highlightPerDragEnabled={false}
+          touchEnabled={true}
+    
+          // show only a window of points, enable horizontal pan
+          visibleRange={{
+            x: {
+              min: Math.min(VISIBLE_POINTS, Math.max(1, lineValues.length)),
+              max: Math.min(VISIBLE_POINTS, Math.max(1, lineValues.length)),
+            },
+          }}
+          viewPortOffsets={{ left: IS_ANDROID ? 55 : 25, right: 0, top: 0, bottom: 10 }}
+          onLayout={() => {
+            if (!isIOS || lineValues.length === 0) return;
+            const window = Math.max(1, Math.min(VISIBLE_POINTS, lineValues.length));
+            const scaleX = Math.max(1, lineValues.length / window);
+            const xValue = Math.max(0, lineValues.length - window);
+          }}
+        /></ScrollView>
+          // ? <ScrollView
+          //   ref={scrollRef}
+          //   horizontal
+          //   showsHorizontalScrollIndicator={true}
+          // >
+          //     <LineChart
+          //       width={chartWidth}
+          //       height={300}
+          //       data={resultsData}
+          //       adjustToWidth
+          //       initialSpacing={0}
+          //       endSpacing={0}  
+          //       thickness={1}
+          //       color={colors.primary}
+          //       areaChart
+          //       curved
+          //       startFillColor={colors.primary}
+          //       endFillColor1={colors.primary}
+          //       startOpacity={0.8}
+          //       endOpacity={0.1}
+          //       dataPointsRadius={0} 
+          //       isAnimated={false}
+          //       animationDuration={0}
+          //       hideDataPoints
+          //       yAxisOffset={25}
+          //     /> 
+          //     </ScrollView> 
+          : <Loader size={50}/> }
         </View>
 
           {/* Stats Grid */}

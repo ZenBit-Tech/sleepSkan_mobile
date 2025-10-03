@@ -98,3 +98,14 @@ To learn more about React Native, take a look at the following resources:
 
 /Users/nastyales/Documents/GitHub/sleepScanTest/node_modules/react-native-background-upload/android/build.gradle
 id 'kotlin-parcelize' 
+
+http://github.com/wuxudong/react-native-charts-wrapper/pull/1007/files
+
+override func layoutSubviews() {
+       super.layoutSubviews()
+       _chart.frame = self.bounds // Adjust the chart's frame to fill the entire component's bounds
+   }
+Example:
+
+if you use a Line chart, you can solve the problem by using the previous piece of code and adding it to this file
+node_modules/react-native-charts-wrapper/ios/ReactNativeCharts/line/RNLineChartView.swift

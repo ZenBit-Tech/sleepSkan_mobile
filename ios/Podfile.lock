@@ -1197,6 +1197,9 @@ PODS:
   - BoringSSL-GRPC/Interface (0.0.37)
   - BVLinearGradient (2.8.3):
     - React-Core
+  - DGCharts (5.0.0):
+    - DGCharts/Core (= 5.0.0)
+  - DGCharts/Core (5.0.0)
   - DoubleConversion (1.1.6)
   - fast_float (6.1.4)
   - FBLazyVector (0.78.2)
@@ -2684,6 +2687,10 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - react-native-charts-wrapper (0.6.0):
+    - DGCharts (= 5.0.0)
+    - React
+    - SwiftyJSON (= 5.0)
   - react-native-date-picker (5.0.13):
     - DoubleConversion
     - glog
@@ -3386,6 +3393,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - Yoga
   - SocketRocket (0.7.1)
+  - SwiftyJSON (5.0.0)
   - Yoga (0.0.0)
 
 DEPENDENCIES:
@@ -3433,6 +3441,7 @@ DEPENDENCIES:
   - react-native-background-upload (from `../node_modules/react-native-background-upload`)
   - react-native-blob-util (from `../node_modules/react-native-blob-util`)
   - "react-native-blur (from `../node_modules/@react-native-community/blur`)"
+  - react-native-charts-wrapper (from `../node_modules/react-native-charts-wrapper`)
   - react-native-date-picker (from `../node_modules/react-native-date-picker`)
   - "react-native-keep-awake (from `../node_modules/@sayem314/react-native-keep-awake`)"
   - react-native-pdf (from `../node_modules/react-native-pdf`)
@@ -3485,6 +3494,7 @@ SPEC REPOS:
   trunk:
     - abseil
     - BoringSSL-GRPC
+    - DGCharts
     - Firebase
     - FirebaseAppCheckInterop
     - FirebaseAuth
@@ -3509,6 +3519,7 @@ SPEC REPOS:
     - React-Codegen
     - RecaptchaInterop
     - SocketRocket
+    - SwiftyJSON
 
 EXTERNAL SOURCES:
   boost:
@@ -3596,6 +3607,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-blob-util"
   react-native-blur:
     :path: "../node_modules/@react-native-community/blur"
+  react-native-charts-wrapper:
+    :path: "../node_modules/react-native-charts-wrapper"
   react-native-date-picker:
     :path: "../node_modules/react-native-date-picker"
   react-native-keep-awake:
@@ -3696,6 +3709,7 @@ SPEC CHECKSUMS:
   boost: 7e761d76ca2ce687f7cc98e698152abd03a18f90
   BoringSSL-GRPC: dded2a44897e45f28f08ae87a55ee4bcd19bc508
   BVLinearGradient: 880f91a7854faff2df62518f0281afb1c60d49a3
+  DGCharts: 6e0cf2644e8f81ad13f04caa8bc18502870a1c54
   DoubleConversion: cb417026b2400c8f53ae97020b2be961b59470cb
   fast_float: 06eeec4fe712a76acc9376682e4808b05ce978b6
   FBLazyVector: e32d34492c519a2194ec9d7f5e7a79d11b73f91c
@@ -3758,6 +3772,7 @@ SPEC CHECKSUMS:
   react-native-background-upload: 7c608537f87106c93530a3a19a853afd55466823
   react-native-blob-util: 5f0c22472c9fd307bd7dd9e7e9a799262d65a537
   react-native-blur: 6782cb12b39a0200ad2a782fb9a5529c2c83c33b
+  react-native-charts-wrapper: cd83d9b1acb8e06ebd18bf297de597906e1cc87d
   react-native-date-picker: 88d5c7fc7a0e9f27edd698e35b8365c8bc2a8fc6
   react-native-keep-awake: 5fb94de503761b67af1bec52f83e18d66e9abaf3
   react-native-pdf: 92ee7c86f0cfda95de0b155d2d00a03ba1db7407
@@ -3806,6 +3821,7 @@ SPEC CHECKSUMS:
   RNSVG: 02ef1157622e9e59e31c257e48a0dc943411c7bf
   RNWorklets: b761beb21b1478ba536cb68376678f3b2e45daaa
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
+  SwiftyJSON: 36413e04c44ee145039d332b4f4e2d3e8d6c4db7
   Yoga: 0c521d2eddeeff54ba1126068140b6e970a77fc0
 
 PODFILE CHECKSUM: 42028e0cc1359426746656a9ef91dced5cc3cb04

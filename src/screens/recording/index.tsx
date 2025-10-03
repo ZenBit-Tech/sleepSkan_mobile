@@ -1,9 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
-import {  Pressable, StyleSheet, View, Platform, Alert } from 'react-native';
-import { useSelector } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import {  Pressable, View, Platform, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { check, request, PERMISSIONS, RESULTS } from 'react-native-permissions';
-import RNFS from 'react-native-fs';
 import { StackScreenProps } from '@react-navigation/stack';
 import { ChunkData, useAudioRecorderCore } from '@asolerp/react-native-audio-chunk-recorder';
 import { activateKeepAwake, deactivateKeepAwake } from '@sayem314/react-native-keep-awake';
@@ -21,14 +19,6 @@ import * as S from './styles'
 import { StopModal } from './components/stopModal';
 import { LoadingModal } from './components';
 
-
-export interface ICard {
-  label: string; 
-  icon: IconTypes; 
-  color: string, 
-  description: string,
-  name: 'tobacco' | 'sleep' | 'coffee' | 'alcohol' | 'medicine' | 'weight'
-}
 
 const auth = getAuth();
 
@@ -184,9 +174,9 @@ export const RecordingScreen = ({navigation}: StackScreenProps<MainStackList, Ma
     <Modal 
       isVisible={showLoadingModal}
       style={S.MODAL_CTR}
-      // onClose={() => {}}
+      onClose={() => {}}
       // TODO: Only for testing purpuses can be closed
-      onClose={() => setShowLoadingModal(false)}
+      // onClose={() => setShowLoadingModal(false)}
     >
       {user?.uid && <LoadingModal 
         chunks={myChunks}
