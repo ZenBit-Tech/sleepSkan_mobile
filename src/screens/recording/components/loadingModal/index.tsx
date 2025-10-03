@@ -34,7 +34,13 @@ export const LoadingModal = ({
   const [loading, setLoading] = useState<boolean>(true)
 
   const handleFinish = async () => {
-    await finishSession(userUid, 'devsession-1');
+    try {
+      setTimeout(async() => await finishSession(userUid, 'devsession-1'), 500)
+    } catch (error) {
+      console.log('Error', error)
+    }
+   
+    // await finishSession(userUid, 'devsession-1');
   };
 
   useEffect(() => {
@@ -49,8 +55,8 @@ export const LoadingModal = ({
           )
       })
     } else if (chunks.length === 0) {
-      setTimeout(() => {
-        handleFinish()
+      setTimeout(async() => {
+        await finishSession(userUid, 'devsession-1')
         Toast.show({
           type: 'success',
           text1: 'Your data was successfully downloaded',
@@ -70,7 +76,7 @@ export const LoadingModal = ({
           <Text style={S.CENTER_TEXT} preset='middleBold' tx='recording.loading' />
             <Text style={S.CENTER_TEXT} preset='header4' tx='recording.keepOpen' />
             <Text style={S.CENTER_TEXT} preset='header4' tx='recording.left' />
-            <CountdownTimer initialMinutes={10} onFinish={handleFinish} />
+            <CountdownTimer initialMinutes={10} onFinish={() => navHome()} />
           </View>
       
         </View>

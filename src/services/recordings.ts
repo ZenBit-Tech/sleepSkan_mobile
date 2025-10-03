@@ -2,6 +2,7 @@ import storage, { getStorage, ref as storageRef, writeToFile,  } from '@react-na
 import auth, { getAuth, signInAnonymously } from '@react-native-firebase/auth';
 import RNFS from 'react-native-fs';
 import { Alert, Platform } from 'react-native';
+import RNBlob from 'react-native-blob-util';
 import Share from 'react-native-share';
 
 import { PROJECT_ID, REGION } from 'src/constants';
@@ -200,84 +201,167 @@ export const fetchSessionJson = async(uid: string) => {
   return res.json();
 }
 
-type DownloadOpts = { path: string; openAfter?: boolean };
+// type DownloadOpts = { path: string; openAfter?: boolean };
 
-export async function downloadReportPdf({ path, openAfter = true }: DownloadOpts) {
-  if (!path || typeof path !== 'string') {
-    throw new Error('downloadReportPdf: "path" (string) is required');
-  }
+// export async function downloadReportPdf({ path, openAfter = true }: DownloadOpts) {
+//   if (!path || typeof path !== 'string') {
+//     throw new Error('downloadReportPdf: "path" (string) is required');
+//   }
 
-  // Allow both "reports/..." and "gs://<bucket>/reports/..."
-  const cleanPath = path.startsWith('gs://')
-    ? path.split('/').slice(3).join('/')            // drop gs://bucket
-    : path.replace(/^\/+/, '');    
+//   // Allow both "reports/..." and "gs://<bucket>/reports/..."
+//   const cleanPath = path.startsWith('gs://')
+//     ? path.split('/').slice(3).join('/')            // drop gs://bucket
+//     : path.replace(/^\/+/, '');    
 
-  // 1) Auth must match your Storage rules:
-  const app = getApp();
-  const auth = getAuth(app);
-  const user = auth.currentUser ?? (await signInAnonymously(auth)).user;
-  const uidInPath = cleanPath.split('/')[1];
-  if (user.uid !== uidInPath) {
-    throw new Error(`Rules require auth.uid === path uid. auth=${user.uid} path=${uidInPath}`);
-  }
+//   // 1) Auth must match your Storage rules:
+//   const app = getApp();
+//   const auth = getAuth(app);
+//   const user = auth.currentUser ?? (await signInAnonymously(auth)).user;
+//   const uidInPath = cleanPath.split('/')[1];
+//   if (user.uid !== uidInPath) {
+//     throw new Error(`Rules require auth.uid === path uid. auth=${user.uid} path=${uidInPath}`);
+//   }
 
-  // 2) Decide a local path
-  const fileName = cleanPath.split('/').pop()!;
-  const localPath = Platform.select({
-    ios: `${RNFS.DocumentDirectoryPath}/${fileName}`,
-    android: `${RNFS.DocumentDirectoryPath}/${fileName}`,
-  })!;
+//   // 2) Decide a local path
+//   const fileName = cleanPath.split('/').pop()!;
+//   const localPath = Platform.select({
+//     ios: `${RNFS.DocumentDirectoryPath}/${fileName}`,
+//     android: `${RNFS.DocumentDirectoryPath}/${fileName}`,
+//   })!;
 
-  // 3) Download using Firebase native SDK (no extra HTTP, respects App Check)
-  const storage = getStorage(app);
-  const ref = storageRef(storage, cleanPath);
-  await writeToFile(ref, localPath);
+//   // 3) Download using Firebase native SDK (no extra HTTP, respects App Check)
+//   const storage = getStorage(app);
+//   const ref = storageRef(storage, cleanPath);
+//   await writeToFile(ref, localPath);
 
-    // Sanity check (helps catch token/permission errors that saved HTML instead)
-    const stat = await RNFS.stat(localPath);
-    if (!stat || Number(stat.size) < 100) {
-      throw new Error('Downloaded file appears empty or invalid.');
+//     // Sanity check (helps catch token/permission errors that saved HTML instead)
+//     const stat = await RNFS.stat(localPath);
+//     if (!stat || Number(stat.size) < 100) {
+//       throw new Error('Downloaded file appears empty or invalid.');
+//     }
+
+//   return localPath;
+// }
+
+// export async function saveToUserLocation(localPath: string, fileName = 'Report.pdf') {
+//   // sanity check the file exists
+//   const ok = await RNFS.exists(localPath);
+//   if (!ok) {
+//     Alert.alert('File not found', 'Please download the report again.');
+//     return;
+//   }
+
+//   const uri =
+//     Platform.OS === 'android' && !localPath.startsWith('file://')
+//       ? `file://${localPath}`
+//       : localPath;
+
+//   try {
+//     await Share.open({
+//       url: uri,
+//       type: 'application/pdf',
+//       filename: fileName,          // ← correct key is "filename" (not fileName)
+//       failOnCancel: false,
+//       saveToFiles: true,           // iOS: shows “Save to Files”
+//       useInternalStorage: true,    // ANDROID: copy/share via FileProvider
+//       showAppsToView: true,        
+//     } as any);
+//   } catch (e) {
+//     console.warn('Share/save failed:', e);
+//     if (Platform.OS === 'ios') {
+//       try {
+//         const b64 = await RNFS.readFile(uri.replace('file://', ''), 'base64');
+//         await Share.open({
+//           url: `data:application/pdf;base64,${b64}`,
+//           type: 'application/pdf',
+//           filename: fileName,
+//           failOnCancel: false,
+//           saveToFiles: true,
+//         } as any);
+//       } catch {}
+//     }
+//   }
+// }
+
+const isHttp = (u: string) => /^https?:\/\//i.test(u);
+const isGs = (u: string) => /^gs:\/\//i.test(u);
+// IMPORTANT: don't treat leading "/" as local; only file:// or content:// are local URIs
+const isLocalUri = (u: string) => /^file:\/\//i.test(u) || /^content:\/\//i.test(u);
+
+function guessFileName(input: string, fallback = 'file.pdf') {
+  // Try to pull a name from the input (path or URL)
+  try {
+    if (isHttp(input)) {
+      const path = new URL(input).pathname;
+      const last = decodeURIComponent(path.split('/').pop() || '');
+      if (last) return last.includes('.') ? last : fallback;
     }
-
-  return localPath;
+  } catch {}
+  const last = input.replace(/\/+$/, '').split('/').pop() || '';
+  return last && last.includes('.') ? last : fallback;
 }
 
-export async function saveToUserLocation(localPath: string, fileName = 'Report.pdf') {
-  // sanity check the file exists
-  const ok = await RNFS.exists(localPath);
-  if (!ok) {
-    Alert.alert('File not found', 'Please download the report again.');
-    return;
-  }
 
-  const uri =
-    Platform.OS === 'android' && !localPath.startsWith('file://')
-      ? `file://${localPath}`
-      : localPath;
+async function toHttpsFromFirebase(input: string): Promise<string> {
+  if (isHttp(input)) return input;
+  if (isGs(input)) return storage().refFromURL(input).getDownloadURL();
+  // Treat everything else as a Firebase Storage path
+  const clean = input.replace(/^\//, ''); // support "/reports/..." too
+  return storage().ref(clean).getDownloadURL();
+}
 
-  try {
-    await Share.open({
-      url: uri,
-      type: 'application/pdf',
-      filename: fileName,          // ← correct key is "filename" (not fileName)
-      failOnCancel: false,
-      saveToFiles: true,           // iOS: shows “Save to Files”
-      useInternalStorage: true,    // ANDROID: copy/share via FileProvider
-      showAppsToView: true,        
-    } as any);
-  } catch (e) {
-    console.warn('Share/save failed:', e);
-    if (Platform.OS === 'ios') {
-      try {
-        const b64 = await RNFS.readFile(uri.replace('file://', ''), 'base64');
-        await Share.open({
-          url: `data:application/pdf;base64,${b64}`,
-          type: 'application/pdf',
-          filename: fileName,
-          failOnCancel: false,
-          saveToFiles: true,
-        } as any);
-      } catch {}
+export async function downloadPdfToDevice(
+  input: string,                 // "reports/…/file.pdf" | "gs://…" | "https://…"
+  fileName?: string              // optional; will be guessed from input if omitted
+) {
+  const { fs, android } = RNBlob;
+
+  // If caller passed a local file/content URI, just copy it to the user-visible location
+  if (isLocalUri(input)) {
+    const name = fileName || guessFileName(input, 'document.pdf');
+    if (Platform.OS === 'android') {
+      const dest = `${fs.dirs.DownloadDir}/${name}`;
+      await fs.cp(input.replace(/^file:\/\//, ''), dest);
+      try { android.actionViewIntent(dest, 'application/pdf'); } catch {}
+      return dest;
+    } else {
+      const dest = `${fs.dirs.DocumentDir}/${name}`;
+      await fs.cp(input.replace(/^file:\/\//, ''), dest);
+      await Share.open({ url: 'file://' + dest, type: 'application/pdf', saveToFiles: true, filename: name, failOnCancel: false });
+      return dest;
     }
+  }
+  // Resolve Firebase path/gs:// to a signed HTTPS URL
+  const url = await toHttpsFromFirebase(input);
+  const name = fileName || guessFileName(input, 'document.pdf');
+
+  if (Platform.OS === 'android') {
+    const dest = `${fs.dirs.DownloadDir}/${name}`;
+    const res = await RNBlob
+      .config({
+        addAndroidDownloads: {
+          useDownloadManager: true,
+          notification: true,
+          title: name,
+          description: 'Downloading PDF…',
+          mediaScannable: true,
+          mime: 'application/pdf',
+          path: dest,
+        },
+      })
+      .fetch('GET', url); // getDownloadURL() already includes the token, no headers needed
+    try { android.actionViewIntent(res.path(), 'application/pdf'); } catch {}
+    return res.path();
+  } else {
+    const dest = `${fs.dirs.DocumentDir}/${name}`;
+    const res = await RNBlob.config({ path: dest }).fetch('GET', url);
+    await Share.open({
+      url: 'file://' + res.path(),
+      type: 'application/pdf',
+      saveToFiles: true,
+      filename: name,
+      failOnCancel: false,
+    });
+    return res.path();
   }
 }
