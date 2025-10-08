@@ -12,14 +12,16 @@ export interface IOnboardingState {
 }
 
 export interface ICommonState {
-  loadingLastRecording: boolean
-  progessLoadingLastRecording: number
-  isShowPlacementScreen: boolean
-  isProfileCompleted: boolean
-  isOnboardingEnd: boolean
+  recordingStart: boolean
 }
 
 export interface IGlobalState {
   isConnected: boolean
   isInternetReachable: boolean
+}
+
+export enum RISK {
+  LOW = 'LOW',
+  HIGH = 'HIGH',
+  MODERATE = 'MODERATE'
 }

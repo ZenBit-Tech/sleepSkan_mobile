@@ -12,8 +12,13 @@ import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.react.soloader.OpenSourceMergedSoMapping
 import com.facebook.soloader.SoLoader
 import com.audiochunkrecorder.AudioChunkRecorderPackage;
+import cl.json.ShareApplication 
 
-class MainApplication : Application(), ReactApplication {
+class MainApplication : Application(), ShareApplication, ReactApplication {
+
+  override fun getFileProviderAuthority(): String {
+    return "$packageName.provider"
+  }
 
   override val reactNativeHost: ReactNativeHost =
       object : DefaultReactNativeHost(this) {
@@ -21,6 +26,7 @@ class MainApplication : Application(), ReactApplication {
             PackageList(this).packages.apply {
               // Packages that cannot be autolinked yet can be added manually here, for example:
               // add(MyReactNativePackage())
+              add(WakeLockPackage())
               // new AudioChunkRecorderPackage()
             }
 

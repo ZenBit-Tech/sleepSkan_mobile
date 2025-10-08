@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import {  FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {  Alert, FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { StackScreenProps } from '@react-navigation/stack';
@@ -9,16 +9,21 @@ import { Screen, Text, Button, Modal, Loader } from 'src/components';
 import { SVGIcon } from 'src/components/svg-icon';
 import { colors, typography } from 'src/theme';
 import { IconTypes } from 'src/components/svg-icon/icons';
-import { auth, profileInfo } from 'src/store/selectors';
+import { auth, common, profileInfo } from 'src/store/selectors';
 import { getUserInfo } from 'src/services/user';
 import { MainStack, SCREEN_HEIGHT, SCREEN_WIDTH } from 'src/constants';
 import Header from 'src/components/header';
 import { MainStackList } from 'src/navigation';
-import { clearFirebaseFolder } from 'src/services';
+import { clearFirebaseFolder, finishSession } from 'src/services';
+import { updateUser } from 'src/db';
 
 import { getAlcoholColor, getAlcoholDescr1, getAlcoholDescr2, getCoffeeColor, getCoffeeDescr, getRiskColor, getRiskSubText, getRiskText, getSleepColor, getSleepDescr, getTobaccoColor, getTobaccoDescr, getWeightColor, getWeightDescr } from './components/helpers';
 import { InfoTooltip } from './components';
 import { FeedbackModal } from './components/feedbackModal';
+import { CleanStorage } from './components/cleanStorage';
+import { useAppDispatch } from 'src/store';
+import { setRecordingStart } from 'src/store/common';
+import { useFocusEffect } from '@react-navigation/native';
 
 
 export interface ICard {
@@ -33,13 +38,16 @@ export const MainHomeScreen = ({ navigation }: StackScreenProps<MainStackList, M
   const {t} = useTranslation();
   const authInfo = useSelector(auth);
   const user = useSelector(profileInfo)
+  const startedRecording = useSelector(common)
   const insets = useSafeAreaInsets();
+  const dispatch = useAppDispatch()
 
   const infoRef = useRef(null);
   const [showTip, setShowTip] = useState(false);
 
   const [showModal, setShowModal] = useState<'tobacco' | 'sleep' | 'coffee' | 'alcohol' | 'medicine' | 'weight' | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
+  const [showCleanStorageModal, setShowCleanStorageModal] = useState<boolean>(false)
 
   const FEEDBACK_CARDS: ICard[] = [
     { label: t('home.tobacco'), name: 'tobacco', icon: 'tobacco', color: getTobaccoColor(user.profile?.tobacco), description: t(getTobaccoDescr(user.profile?.tobacco))},
@@ -49,6 +57,16 @@ export const MainHomeScreen = ({ navigation }: StackScreenProps<MainStackList, M
     { label: t('home.medicine'), name: 'medicine',icon: 'medicine', color: user.profile?.medicines && user.profile?.medicines.includes(6) ? colors.green : colors.red, description: user.profile?.medicines && user.profile?.medicines.includes(6) ? t('home.greenMedicineDescr') : t('home.redMedicineDescr')},
     { label: t('home.weight'), name: 'weight',icon: 'weight', color: getWeightColor(user.profile?.BMI), description: t(getWeightDescr(user.profile?.BMI))},
   ];
+
+  useFocusEffect(useCallback(() => {
+    const handleFinishSession = async() => {
+      authInfo.uid && await finishSession(authInfo.uid, 'devsession-1')
+      authInfo.uid && dispatch(setRecordingStart(false))
+    }
+    if (startedRecording.recordingStart) {
+      handleFinishSession()
+    }
+  }, [startedRecording.recordingStart, authInfo.uid]))
 
   useEffect(() => {
     authInfo.uid && getUserInfo(authInfo.uid)
@@ -74,8 +92,33 @@ export const MainHomeScreen = ({ navigation }: StackScreenProps<MainStackList, M
   );
 
   const handleNewRecording = async() => {
+    authInfo.uid && await updateUser(authInfo.uid, {recording: false})
+    setShowCleanStorageModal(false)
+    setLoading(false)
+    setTimeout(() => navigation.navigate(MainStack.PRE_RECORDING), 400)
+  }
+
+  const clearStorage = async() => {
+    try {
+      setLoading(true)
+      authInfo.uid && await clearFirebaseFolder(
+        authInfo.uid,
+        handleNewRecording
+      )
+
+    } catch (error) {
+      setShowCleanStorageModal(false)
+      setLoading(false)
+      //TODO: Only for tests
+      Alert.alert("Error", 'Something welt wrong');
+      console.log(error)
+    } 
+  }
+
+  const handleCleanAndStartNew = async () => {
     setLoading(true)
     authInfo.uid && await clearFirebaseFolder(authInfo.uid)
+    authInfo.uid && await updateUser(authInfo.uid, {recording: false})
     setLoading(false)
     navigation.navigate(MainStack.PRE_RECORDING)
   }
@@ -137,7 +180,8 @@ export const MainHomeScreen = ({ navigation }: StackScreenProps<MainStackList, M
           ? <View>
               <TouchableOpacity 
                 style={styles.bottomButtonArea} 
-                onPress={handleNewRecording}>
+                // onPress={() => setShowCleanStorageModal(true)}>
+                onPress={handleCleanAndStartNew}> 
                   {loading 
                     ? <Loader /> 
                     : <Text tx='home.newRecording' style={styles.outlinedButtonText}/>}
@@ -153,6 +197,11 @@ export const MainHomeScreen = ({ navigation }: StackScreenProps<MainStackList, M
               onPress={() => navigation.navigate(MainStack.PRE_RECORDING)}>
               <Text text={getBtnText()} style={styles.outlinedButtonText}/>
             </TouchableOpacity>}
+            {/* <TouchableOpacity 
+                style={styles.bottomButtonArea} 
+                onPress={() => authInfo.uid && finishSession(authInfo.uid, 'devsession-1')}>
+                <Text text='Finish session' style={styles.outlinedButtonText}/>
+              </TouchableOpacity> */}
       </View>
       {/* Feedback Modal */}
       <Modal 
@@ -162,6 +211,18 @@ export const MainHomeScreen = ({ navigation }: StackScreenProps<MainStackList, M
       >
         <FeedbackModal
           card={FEEDBACK_CARDS.find(card => card.name === showModal)}
+        />
+      </Modal>
+      {/* Clean storage modal */}
+      <Modal 
+        isVisible={showCleanStorageModal}
+        style={styles.modalCtr}
+        onClose={() => setShowCleanStorageModal(false)}
+      >
+        <CleanStorage
+        loading={loading}
+        onClose={() => setShowCleanStorageModal(false)}
+        clearStorage={clearStorage}
         />
       </Modal>
     </Screen>

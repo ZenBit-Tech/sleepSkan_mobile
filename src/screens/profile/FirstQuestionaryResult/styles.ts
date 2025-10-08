@@ -1,4 +1,5 @@
-import { ImageStyle, TextStyle, ViewStyle } from 'react-native';
+import { TextStyle, ViewStyle } from 'react-native';
+import { SCREEN_WIDTH } from 'src/constants';
 
 
 export const CONTAINER: ViewStyle = {
@@ -8,11 +9,6 @@ export const CONTAINER: ViewStyle = {
   paddingHorizontal: 36,
 };
 
-export const IMAGE: ImageStyle = {
-  width: 174,
-  height: 230,
-  alignSelf: 'center',
-};
 
 export const MAIN: ViewStyle = {
   // flex: 1,
@@ -22,7 +18,7 @@ export const MAIN: ViewStyle = {
 
 export const TEXT_CENTER: TextStyle = {
   textAlign: 'center',
-  // width: 320,
+  width: SCREEN_WIDTH - 80,
 };
 
 export const BTNS_CTR: ViewStyle = {

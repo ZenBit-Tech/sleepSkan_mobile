@@ -139,11 +139,13 @@ export const FirstQuestionary: FC<
       answers: [],
       question: 'profile.question7_1',
     },
-    { type: 'neck',
+    { type: 'buttons',
       label: 'neck_size',
       question: 'profile.question10',
       answers: ['common.yes', 'common.no'],
-      fieldChange: {neck_size: neck},
+      fieldChange: {neck_size: answer},
+      action1Value: true,
+      action2Value: false,
     },
   ], [answer, date, height, weight, neck]);
 
@@ -207,7 +209,7 @@ export const FirstQuestionary: FC<
       );
     } else if (question.type === 'neck') {
       return (
-        <View style={S.CTR_HEIGHT}>
+        <View style={[S.CTR_HEIGHT, {justifyContent: 'center'}]}>
           <QuestionWithInput
             question={question}
             neck={neck}

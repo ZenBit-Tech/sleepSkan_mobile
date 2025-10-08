@@ -23,7 +23,7 @@ export interface IProfile {
   stop_breathing?: boolean
   loud_snore?: boolean
   blood_pressure?: boolean
-  neck_size?: number
+  neck_size?: boolean
   neck_size_check?: boolean
   //second questionary
   second_questionary?: number

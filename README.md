@@ -96,5 +96,24 @@ To learn more about React Native, take a look at the following resources:
 - [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
 - [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
 
+======DESCRIPTION========
+
+1. In the app we have 2 different chart libraries and can use the one that can be more flexible to specific customization
+2. Also we have 2 options for recording 
+    - keep app alive all the time (batary will die fast) - just uncomment activateKeepAwake() and deactivateKeepAwake() here src/screens/recording/index.tsx
+    - record audio and send chunks while app is on the background - main functionality
+
+
 /Users/nastyales/Documents/GitHub/sleepScanTest/node_modules/react-native-background-upload/android/build.gradle
 id 'kotlin-parcelize' 
+
+http://github.com/wuxudong/react-native-charts-wrapper/pull/1007/files
+
+override func layoutSubviews() {
+       super.layoutSubviews()
+       _chart.frame = self.bounds // Adjust the chart's frame to fill the entire component's bounds
+   }
+Example:
+
+if you use a Line chart, you can solve the problem by using the previous piece of code and adding it to this file
+node_modules/react-native-charts-wrapper/ios/ReactNativeCharts/line/RNLineChartView.swift

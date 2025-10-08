@@ -41,5 +41,6 @@ export const LIST_STYLE: ViewStyle = {
 }
 
 export const CTR_HEIGHT: ViewStyle = {
-  height: 240
+  height: 300,
+  justifyContent: 'center'
 }

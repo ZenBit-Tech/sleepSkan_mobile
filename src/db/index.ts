@@ -31,7 +31,7 @@ type UserData = {
   gender?: 'male' | 'female';
   height?: number;
   weight?: number;
-  neck_size?: number;
+  neck_size?: boolean;
   tired?: boolean;
   stop_breathing?: boolean;
   loud_snore?: boolean;

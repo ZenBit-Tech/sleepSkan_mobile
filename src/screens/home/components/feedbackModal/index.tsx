@@ -4,9 +4,11 @@ import {
   StyleSheet,
   type View as RNView,
 } from 'react-native';
-import { SVGIcon, Text } from 'src/components';
-import { ICard } from '../..';
 import { ScrollView } from 'react-native-gesture-handler';
+
+import { SVGIcon, Text } from 'src/components';
+
+import { ICard } from '../..';
 
 type Props = {
   card?: ICard,
@@ -22,7 +24,7 @@ export const FeedbackModal = ({
           <SVGIcon name={card.icon} size={50} color={card.color} />
           <Text preset="middleBold" style={[styles.feedbackCardLabel, { color: card.color }]}>{card.label}</Text>
         </View>}
-        <View>
+        <View style={styles.margin}>
           <Text preset='header3' style={styles.textStyle}>{card?.description}</Text>
         </View>
       </ScrollView>
@@ -32,7 +34,6 @@ export const FeedbackModal = ({
 const styles = StyleSheet.create({
   modalCtr: {
     marginHorizontal: 16,
-    borderRadius: 16,
     paddingBottom: 63
   },
   feedbackCard: {
@@ -48,4 +49,7 @@ const styles = StyleSheet.create({
   textStyle: {
     textAlign: 'center'
   },
+  margin: {
+    marginBottom: 63
+  }
 });

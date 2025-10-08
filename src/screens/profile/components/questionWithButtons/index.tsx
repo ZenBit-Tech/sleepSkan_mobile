@@ -1,13 +1,13 @@
 import React, { useRef, useState } from 'react';
 import { TouchableOpacity, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { Button, SVGIcon, Text } from 'src/components';
+import { InfoTooltip } from 'src/screens/home/components';
+import { colors } from 'src/theme';
 
 import * as S from './styles';
 import { IQuestion } from '../../firstQuestionary';
-import { InfoTooltip } from 'src/screens/home/components';
-import { colors } from 'src/theme';
-import { useTranslation } from 'react-i18next';
 
 interface IQuestionWithButtons {
   answer: string | boolean | undefined,
@@ -23,11 +23,13 @@ export const QuestionWithButtons  = ({answer, question, setAnswer}: IQuestionWit
   return (
     <View style={S.GAP}>
       <View style={S.ROW}>
+        <Text style={S.TEXT_CENTER}>
         {question.tooltip && <TouchableOpacity ref={infoRef} style={S.BTN_HEIGHT} onPress={() => setShowTip(true)}>
-          <SVGIcon name="info" size={12.5} color={colors.white07} style={S.INFO_ICON} />
+          <SVGIcon name="info" size={18} color={colors.white07} style={S.INFO_ICON} />
         </TouchableOpacity>}
-       
-        <InfoTooltip
+         <Text preset="middleBold" style={S.TEXT_CENTER} tx={question.question} />
+         </Text>
+         <InfoTooltip
           anchorRef={infoRef}
           visible={showTip}
           withIcon={false}
@@ -35,7 +37,6 @@ export const QuestionWithButtons  = ({answer, question, setAnswer}: IQuestionWit
           text={t('profile.alcoholInfo')}
           placement="bottom"
         />
-         <Text preset="middleBold" style={S.TEXT_CENTER} tx={question.question} />
       </View>
       <View style={[S.BTNS_CTR, question.buttonsCount === 3 && {height: 170}]}>
         <Button
