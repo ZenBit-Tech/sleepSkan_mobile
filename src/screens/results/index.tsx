@@ -102,6 +102,7 @@ export const SleepReportScreen = () => {
         const { values: mmVals, indices: mmIdxData } = downsampleMinMax(res.points, Math.floor(chartWidth / 2));
 
         const data = mmVals.map(v => ({ value: v + 94}));
+        // const data = res.points.map((v: number) => ({ value: v + 94}));
         setTotalSleep(res.totalSeconds)
         setTotalSnore(res.totalSnoringSec)
         setPeak(res.peakSnore)
@@ -258,7 +259,8 @@ const yTicks = Array.from({ length: 10 + 1 }, (_, i) => 30 + i * 5);
             const scaleX = Math.max(1, lineValues.length / window);
             const xValue = Math.max(0, lineValues.length - window);
           }}
-        /></ScrollView>
+        />
+        </ScrollView>
           // ? <ScrollView
           //   ref={scrollRef}
           //   horizontal
@@ -288,7 +290,7 @@ const yTicks = Array.from({ length: 10 + 1 }, (_, i) => 30 + i * 5);
           //     </ScrollView> 
           : <Loader size={50}/> }
         </View>
-
+        {/* <Text text={`length: ${resultsData.length}`}/> */}
           {/* Stats Grid */}
         <View style={S.GRID}>
           <StatCard

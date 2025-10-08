@@ -2,14 +2,18 @@ import React, { useEffect, useState } from 'react';
 import {
   View,
   StyleSheet,
+  Platform,
 } from 'react-native';
 import { TxKeyPath } from 'src/i18n';
 import { ChunkData } from '@asolerp/react-native-audio-chunk-recorder';
 import Toast from 'react-native-toast-message';
+import { deactivateKeepAwake } from '@sayem314/react-native-keep-awake';
 
 import { SVGIcon, Text } from 'src/components';
 import { ScrollView } from 'react-native-gesture-handler';
 import { finishSession, uploadAudioToFirebase } from 'src/services';
+import { useAppDispatch } from 'src/store';
+import { setRecordingStart } from 'src/store/common';
 
 import * as S from './styles'
 import { CountdownTimer } from '../countDown';
@@ -31,40 +35,48 @@ export const LoadingModal = ({
   navHome
 }: Props)=> {
 
+  const dispatch = useAppDispatch()
+
   const [loading, setLoading] = useState<boolean>(true)
 
-  const handleFinish = async () => {
-    try {
-      setTimeout(async() => await finishSession(userUid, 'devsession-1'), 500)
-    } catch (error) {
-      console.log('Error', error)
-    }
-   
-    // await finishSession(userUid, 'devsession-1');
-  };
 
   useEffect(() => {
-    if (chunks.length > 0) {
-      chunks.map(chunk => {
-        const fileName = chunk.path.split('/').pop() || `audio_${Date.now()}.aac`;
-          uploadAudioToFirebase(
-            chunk.path, 
-            fileName, 
-            userUid,
-            () => setMyChunks(chunks.filter(c => c.path !== chunk.path))
-          )
-      })
-    } else if (chunks.length === 0) {
-      setTimeout(async() => {
-        await finishSession(userUid, 'devsession-1')
-        Toast.show({
-          type: 'success',
-          text1: 'Your data was successfully downloaded',
-        });
-        navHome()
-      }, 1000)
-      
-    }
+    try {
+      setTimeout(() => {if (chunks.length > 0) {
+        console.log('chunks', chunks)
+        try {
+          chunks.map(chunk => {
+            const fileName = chunk.path.split('/').pop() || `audio_${Date.now()}.m4a`;
+              uploadAudioToFirebase(
+                chunk.path, 
+                fileName, 
+                userUid,
+                () => setMyChunks(chunks.filter(c => c.path !== chunk.path))
+              )
+          })
+        } catch (error) {
+          console.log('Error chunks', error)
+        }
+        
+      } else if (chunks.length === 0) {
+        setTimeout(async() => {
+          await finishSession(userUid, 'devsession-1')
+          deactivateKeepAwake()
+          dispatch(setRecordingStart(false))
+          setTimeout(() => Toast.show({
+            type: 'success',
+            text1: 'Your data was successfully downloaded',
+          }), 1000)
+          navHome()
+        }, 1000)
+        
+      }}, 2000)
+    } catch (error) {
+      deactivateKeepAwake()
+      navHome()
+      console.log("Error from loading", error)
+    } 
+    
   }, [chunks, loading])
 
   return (

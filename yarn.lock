@@ -2,6 +2,11 @@
 # yarn lockfile v1
 
 
+"@adrianso/react-native-device-brightness@^1.2.7":
+  version "1.2.7"
+  resolved "https://registry.yarnpkg.com/@adrianso/react-native-device-brightness/-/react-native-device-brightness-1.2.7.tgz#46905d0358c4f6dce5c88eb51882f528cc716f60"
+  integrity sha512-q3OTFGohAh04R8cBka7/eNXaeSD8bAZocMsifLIR3oDF5N9cNH2UVEjzJaFXW8DHFEsODpljpT+eyGWIhKlkow==
+
 "@ampproject/remapping@^2.2.0":
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/@ampproject/remapping/-/remapping-2.3.0.tgz#ed441b6fa600072520ce18b43d2c8cc8caecc7f4"
@@ -4139,6 +4144,11 @@ event-target-shim@^5.0.0, event-target-shim@^5.0.1:
   resolved "https://registry.yarnpkg.com/event-target-shim/-/event-target-shim-5.0.1.tgz#5d4d3ebdf9583d63a5333ce2deb7480ab2b05789"
   integrity sha512-i/2XbnSz/uxRCU6+NdVJgKWDTM427+MqYbkQzD321DuCQJUqOuJKIA0IM2+W2xtYHdKOmZ4dR6fExsd4SXL+WQ==
 
+eventemitter3@^4.0.7:
+  version "4.0.7"
+  resolved "https://registry.yarnpkg.com/eventemitter3/-/eventemitter3-4.0.7.tgz#2de9b68f6528d5644ef5c59526a1b4a07306169f"
+  integrity sha512-8guHBZCwKnFhYdHr2ysuRWErTwhoN2X8XELRlrRwpmfeY2jjuUN4taQMsULKUVo1K4DvZl+0pgfyoysHxvmvEw==
+
 execa@^5.0.0:
   version "5.1.1"
   resolved "https://registry.yarnpkg.com/execa/-/execa-5.1.1.tgz#f80ad9cbf4298f7bd1d4c9555c21e93741c411dd"
@@ -6687,6 +6697,18 @@ react-native-animatable@1.4.0:
   integrity sha512-DZwaDVWm2NBvBxf7I0wXKXLKb/TxDnkV53sWhCvei1pRyTX3MVFpkvdYBknNBqPrxYuAIlPxEp7gJOidIauUkw==
   dependencies:
     prop-types "^15.8.1"
+
+react-native-background-actions@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/react-native-background-actions/-/react-native-background-actions-4.0.1.tgz#51fab1df75fb69428c059929284d2ab3b5ff673b"
+  integrity sha512-LADhnb4ag1oH5Lotq0j8K9e2cFmrafFyg2PCME88VkTjqDUgNcJonkNdMCTHN0N3fh+hwAA7nDR4Cxkj9Q8eCw==
+  dependencies:
+    eventemitter3 "^4.0.7"
+
+react-native-background-fetch@^4.2.8:
+  version "4.2.8"
+  resolved "https://registry.yarnpkg.com/react-native-background-fetch/-/react-native-background-fetch-4.2.8.tgz#b0ff9fafe30349035179ae08d7426778d3eabf01"
+  integrity sha512-vKPumvhBuxr3oI1L7cNunYIsKV8jD4Xz2A9JT/FW5yvn7GAAct184FAZ9dFef75auBxixinaCjRBlip53xGWmQ==
 
 react-native-background-upload@^6.6.0:
   version "6.6.0"

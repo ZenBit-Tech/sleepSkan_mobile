@@ -171,7 +171,11 @@ export default {
       greenAlcohol2: 'Manter o consumo abaixo de 3 doses por vez está alinhado com os limites recomendados para minimizar os efeitos negativos no sono.',
       redAlcohol2: 'Beber 3 ou mais doses numa só ocasião (o equivalente a 3 copos de vinho ou 3 cervejas) está associado ao agravamento da apneia do sono. Considere reduzir a dose especialmente nas 3 horas antes de dormir.',
       newRecording: 'Repetir gravação',
-      reviewRecording: 'Ver os detalhes da última gravação'
+      reviewRecording: 'Ver os detalhes da última gravação',
+      deleteDescr: 'In order to create nnew sleep recording you have to delete previous recordings.',
+      sureClean: 'Are you sure you want to delete previous regordings? Please notice that this action can not be undone!',
+      delete: 'Yes, I want to delete recordings',
+      cleaning: 'Deleting recordings...'
     },
     recording: {
       startRecording: 'Iniciar Gravação',

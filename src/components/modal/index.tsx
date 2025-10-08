@@ -46,13 +46,14 @@ export const Modal: FC<ModalProps> = ({
           // pointerEvents="none"             
         />
       </Pressable>
-      <Toast topOffset={insets.top + 14} config={toastConfig} />
+      {/* <Toast topOffset={insets.top + 14} config={toastConfig} /> */}
       <LinearGradient
         colors={['rgba(52,108,148,0.6)', 'rgba(16,33,46,0.6)']}
         start={{ x: 0.5, y: 0 }}
         end={{ x: 0.5, y: 1 }}  
         style={{ paddingTop: insets.top, borderRadius: 16 }}
       >{children}</LinearGradient>
+      <Toast topOffset={insets.top + 14} config={toastConfig} />
     </RNModal>
   )
 }

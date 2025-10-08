@@ -96,6 +96,14 @@ To learn more about React Native, take a look at the following resources:
 - [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
 - [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
 
+======DESCRIPTION========
+
+1. In the app we have 2 different chart libraries and can use the one that can be more flexible to specific customization
+2. Also we have 2 options for recording 
+    - keep app alive all the time (batary will die fast) - just uncomment activateKeepAwake() and deactivateKeepAwake() here src/screens/recording/index.tsx
+    - record audio and send chunks while app is on the background - main functionality
+
+
 /Users/nastyales/Documents/GitHub/sleepScanTest/node_modules/react-native-background-upload/android/build.gradle
 id 'kotlin-parcelize' 
 

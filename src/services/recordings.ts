@@ -9,6 +9,8 @@ import { PROJECT_ID, REGION } from 'src/constants';
 import { updateUser } from 'src/db';
 import { RISK } from 'src/models';
 import { getApp } from '@react-native-firebase/app';
+import { store } from 'src/store';
+import { setProfile, setRecording } from 'src/screens/profile/reducer';
 
 
 type FinishSessionResponse = {
@@ -26,7 +28,7 @@ type FinishSessionPayload = {
   sessionId: string;
 };
 
-export const clearFirebaseFolder = async (userId: string) => {
+export const clearFirebaseFolder = async (userId: string, onSuccess?: () => void) => {
   try {
     const uid = auth().currentUser?.uid;
 
@@ -38,12 +40,14 @@ export const clearFirebaseFolder = async (userId: string) => {
     // Check if the folder has any files (i.e., it exists logically)
     if (result.items.length === 0) {
       console.log(`ℹ️ Folder recordings/${userId}/devsession-1 does not exist or is already empty.`);
+      onSuccess?.()
       return;
     }
     
      // Delete each object (allowed by write rule when request.resource == null)
      await Promise.all(result.items.map((item) => item.delete()));
      console.log('✅ Cleared devsession-1');
+     onSuccess?.()
 
   } catch (error) {
     console.error(`❌ Failed to clear folder for user ${userId}:`, error);
@@ -64,6 +68,7 @@ export const finishSession = async (
   const currentUser = auth().currentUser;
   const uid = currentUser?.uid;
   if (!uid || uid !== userId) throw new Error('Not signed in as this user');
+  console.log('Finishing session')
 
   const idToken = await currentUser.getIdToken(true);
   const url = `https://${REGION}-${PROJECT_ID}.cloudfunctions.net/finishSession`;
@@ -117,12 +122,17 @@ export const finishSession = async (
       const data: FinishSessionResponse =
         (await res.json().catch(() => ({ ok: true }))) as FinishSessionResponse;
 
-      await updateUser(uid, {
+        console.log('data', data)
+      data ? await updateUser(uid, {
         recording: true,
-        risk: data.risk,
-        recording_results: data.resultObject,
+        risk: data.risk || '',
+        recording_results: data.resultObject || '',
         pdf_file: data?.pdfReport?.filePath || '',
+      }) : await updateUser(uid, {
+        recording: true,
       });
+
+      store.dispatch(setRecording(true))
 
       return data;
     } catch (e) {
@@ -150,13 +160,17 @@ export const uploadAudioToFirebase = async (
   onSuccess?: () => void
 ): Promise<string> => {
   try {
+    if (!filePath || typeof filePath !== 'string') {
+      throw new Error(`uploadAudioToFirebase: invalid path: ${String(filePath)}`);
+    }
     const fileExists = await RNFS.exists(filePath);
     if (!fileExists) throw new Error('File does not exist at path: ' + filePath);
 
     const fileRef = await storage().ref(`recordings/${userId}/devsession-1/${fileName}`);
 
     // ✅ Use putFile for local file uploads (no need for base64 or blob)
-    const task = fileRef.putFile(filePath, { contentType: 'audio/wav' });
+    console.log(filePath)
+    const task = fileRef.putFile(filePath, { contentType: Platform.OS === 'ios' ? 'audio/m4a' : 'audio/wav' });
 
     return new Promise((resolve, reject) => {
       const unsubscribe = task.on(
