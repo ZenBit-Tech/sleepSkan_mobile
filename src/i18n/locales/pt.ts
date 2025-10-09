@@ -172,10 +172,10 @@ export default {
       redAlcohol2: 'Beber 3 ou mais doses numa só ocasião (o equivalente a 3 copos de vinho ou 3 cervejas) está associado ao agravamento da apneia do sono. Considere reduzir a dose especialmente nas 3 horas antes de dormir.',
       newRecording: 'Repetir gravação',
       reviewRecording: 'Ver os detalhes da última gravação',
-      deleteDescr: 'In order to create nnew sleep recording you have to delete previous recordings.',
-      sureClean: 'Are you sure you want to delete previous regordings? Please notice that this action can not be undone!',
-      delete: 'Yes, I want to delete recordings',
-      cleaning: 'Deleting recordings...'
+      deleteDescr: 'Nesta fase, para começar uma nova gravação de sono, é necessário eliminar a gravação anterior.',
+      sureClean: 'Tem a certeza de que pretende eliminar as gravações anteriores? Lembre-se: uma vez apagadas, não será possível voltar a aceder a elas',
+      delete: 'Eliminar gravações',
+      cleaning: 'A eliminar gravações...'
     },
     recording: {
       startRecording: 'Iniciar Gravação',
@@ -200,7 +200,8 @@ export default {
       back: 'Voltar à página principal',
       loading: 'Os resultados estão a ser carregados',
       keepOpen: 'Por favor, não feche a aplicação - o seu relatório poderá ser perdido ',
-      left: 'Restam'
+      left: 'Restam',
+      success: 'Os seus dados foram descarregados com sucesso'
     },
     results: {
       title: 'Risco de Apneia',

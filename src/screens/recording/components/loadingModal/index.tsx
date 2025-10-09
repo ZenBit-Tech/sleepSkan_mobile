@@ -8,6 +8,7 @@ import { TxKeyPath } from 'src/i18n';
 import { ChunkData } from '@asolerp/react-native-audio-chunk-recorder';
 import Toast from 'react-native-toast-message';
 import { deactivateKeepAwake } from '@sayem314/react-native-keep-awake';
+import { useTranslation } from 'react-i18next';
 
 import { SVGIcon, Text } from 'src/components';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -36,17 +37,16 @@ export const LoadingModal = ({
 }: Props)=> {
 
   const dispatch = useAppDispatch()
-
-  const [loading, setLoading] = useState<boolean>(true)
-
+  const {t} = useTranslation()
 
   useEffect(() => {
     try {
-      setTimeout(() => {if (chunks.length > 0) {
-        console.log('chunks', chunks)
+        if (chunks.length > 0) {
         try {
           chunks.map(chunk => {
-            const fileName = chunk.path.split('/').pop() || `audio_${Date.now()}.m4a`;
+            const fileName = Platform.OS === 'ios' 
+              ? `chunk_${chunk.sequence || Date.now()}.m4a` 
+              : chunk.path.split('/').pop() || `audio_${Date.now()}.m4a`;
               uploadAudioToFirebase(
                 chunk.path, 
                 fileName, 
@@ -60,24 +60,36 @@ export const LoadingModal = ({
         
       } else if (chunks.length === 0) {
         setTimeout(async() => {
-          await finishSession(userUid, 'devsession-1')
+          await finishSession(
+            userUid, 
+            'devsession-1', 
+            () => {
+              Toast.show({
+                type: 'error',
+                text1: 'Ocorreu um erro.',
+              });
+            },
+            () => {
+              Toast.show({
+                type: 'success',
+                text1: `${t('recording.success')}`,})
+            }
+          )
           deactivateKeepAwake()
           dispatch(setRecordingStart(false))
-          setTimeout(() => Toast.show({
-            type: 'success',
-            text1: 'Your data was successfully downloaded',
-          }), 1000)
           navHome()
         }, 1000)
-        
-      }}, 2000)
+      }
     } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: `${t('errors.wrong')}`,})
       deactivateKeepAwake()
       navHome()
       console.log("Error from loading", error)
     } 
     
-  }, [chunks, loading])
+  }, [chunks])
 
   return (
       <ScrollView style={S.MODAL_CTR}>

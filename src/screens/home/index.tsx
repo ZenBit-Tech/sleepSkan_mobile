@@ -4,8 +4,9 @@ import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { StackScreenProps } from '@react-navigation/stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useFocusEffect } from '@react-navigation/native';
 
-import { Screen, Text, Button, Modal, Loader } from 'src/components';
+import { Screen, Text, Modal, Loader } from 'src/components';
 import { SVGIcon } from 'src/components/svg-icon';
 import { colors, typography } from 'src/theme';
 import { IconTypes } from 'src/components/svg-icon/icons';
@@ -16,14 +17,29 @@ import Header from 'src/components/header';
 import { MainStackList } from 'src/navigation';
 import { clearFirebaseFolder, finishSession } from 'src/services';
 import { updateUser } from 'src/db';
+import { useAppDispatch } from 'src/store';
+import { setRecordingStart } from 'src/store/common';
 
-import { getAlcoholColor, getAlcoholDescr1, getAlcoholDescr2, getCoffeeColor, getCoffeeDescr, getRiskColor, getRiskSubText, getRiskText, getSleepColor, getSleepDescr, getTobaccoColor, getTobaccoDescr, getWeightColor, getWeightDescr } from './components/helpers';
 import { InfoTooltip } from './components';
 import { FeedbackModal } from './components/feedbackModal';
 import { CleanStorage } from './components/cleanStorage';
-import { useAppDispatch } from 'src/store';
-import { setRecordingStart } from 'src/store/common';
-import { useFocusEffect } from '@react-navigation/native';
+import { 
+  getAlcoholColor, 
+  getAlcoholDescr1, 
+  getAlcoholDescr2, 
+  getCoffeeColor, 
+  getCoffeeDescr, 
+  getRiskColor, 
+  getRiskSubText, 
+  getRiskText, 
+  getSleepColor, 
+  getSleepDescr, 
+  getTobaccoColor, 
+  getTobaccoDescr, 
+  getWeightColor, 
+  getWeightDescr 
+} from './components/helpers';
+import { setRecording } from '../profile/reducer';
 
 
 export interface ICard {
@@ -93,12 +109,13 @@ export const MainHomeScreen = ({ navigation }: StackScreenProps<MainStackList, M
 
   const handleNewRecording = async() => {
     authInfo.uid && await updateUser(authInfo.uid, {recording: false})
-    setShowCleanStorageModal(false)
+    dispatch(setRecording(false))
     setLoading(false)
-    setTimeout(() => navigation.navigate(MainStack.PRE_RECORDING), 400)
+    navigation.navigate(MainStack.PRE_RECORDING)
+    setShowCleanStorageModal(false)
   }
 
-  const clearStorage = async() => {
+  const clearStorage = useCallback(async() => {
     try {
       setLoading(true)
       authInfo.uid && await clearFirebaseFolder(
@@ -113,15 +130,15 @@ export const MainHomeScreen = ({ navigation }: StackScreenProps<MainStackList, M
       Alert.alert("Error", 'Something welt wrong');
       console.log(error)
     } 
-  }
+  }, [authInfo.uid])
 
-  const handleCleanAndStartNew = async () => {
-    setLoading(true)
-    authInfo.uid && await clearFirebaseFolder(authInfo.uid)
-    authInfo.uid && await updateUser(authInfo.uid, {recording: false})
-    setLoading(false)
-    navigation.navigate(MainStack.PRE_RECORDING)
-  }
+  // const handleCleanAndStartNew = async () => {
+  //   setLoading(true)
+  //   authInfo.uid && await clearFirebaseFolder(authInfo.uid)
+  //   authInfo.uid && await updateUser(authInfo.uid, {recording: false})
+  //   setLoading(false)
+  //   navigation.navigate(MainStack.PRE_RECORDING)
+  // }
 
   return (
     <Screen customHeader={<Header withLogout />}  preset={SCREEN_HEIGHT > 750 ? 'fixed' : 'scroll'}>
@@ -180,8 +197,8 @@ export const MainHomeScreen = ({ navigation }: StackScreenProps<MainStackList, M
           ? <View>
               <TouchableOpacity 
                 style={styles.bottomButtonArea} 
-                // onPress={() => setShowCleanStorageModal(true)}>
-                onPress={handleCleanAndStartNew}> 
+                onPress={() => setShowCleanStorageModal(true)}>
+                {/* onPress={handleCleanAndStartNew}>  */}
                   {loading 
                     ? <Loader /> 
                     : <Text tx='home.newRecording' style={styles.outlinedButtonText}/>}
@@ -197,11 +214,11 @@ export const MainHomeScreen = ({ navigation }: StackScreenProps<MainStackList, M
               onPress={() => navigation.navigate(MainStack.PRE_RECORDING)}>
               <Text text={getBtnText()} style={styles.outlinedButtonText}/>
             </TouchableOpacity>}
-            {/* <TouchableOpacity 
+            <TouchableOpacity 
                 style={styles.bottomButtonArea} 
                 onPress={() => authInfo.uid && finishSession(authInfo.uid, 'devsession-1')}>
                 <Text text='Finish session' style={styles.outlinedButtonText}/>
-              </TouchableOpacity> */}
+              </TouchableOpacity>
       </View>
       {/* Feedback Modal */}
       <Modal 

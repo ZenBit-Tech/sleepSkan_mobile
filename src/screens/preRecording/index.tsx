@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
-import {  Image, Pressable, StyleSheet, TouchableOpacity, View } from 'react-native';
+import React, { useCallback, useState } from 'react';
+import {  Image, TouchableOpacity, View } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useFocusEffect } from '@react-navigation/native';
+import { StackScreenProps } from '@react-navigation/stack';
 
-import { Button, MainHeader, Modal, Screen, Text } from 'src/components';
+import { Loader, MainHeader, Modal, Screen, Text } from 'src/components';
 import { IconTypes } from 'src/components/svg-icon/icons';
 import { auth, profileInfo } from 'src/store/selectors';
-
-import { BED_IMG, MainStack, SCREEN_HEIGHT } from 'src/constants';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Header from 'src/components/header';
-import { StackScreenProps } from '@react-navigation/stack';
+import { clearFirebaseFolder } from 'src/services';
+import { BED_IMG, MainStack } from 'src/constants';
 import { MainStackList } from 'src/navigation';
 
 import * as S from './styles'
@@ -30,13 +30,22 @@ export const PreRecordingScreen = ({navigation}: StackScreenProps<MainStackList,
   const user = useSelector(profileInfo)
   const insets = useSafeAreaInsets();
 
-  const [showModal, setShowModal] = useState<boolean>(true)
+  const [showModal, setShowModal] = useState<boolean>(false)
+  const [clearLoading, setClearLoading] = useState<boolean>(true)
 
+  useFocusEffect(useCallback(() => {
+    setTimeout(() => setShowModal(true), 500) 
+  }, []))
 
-  const handleNext = () => {
-    // handle the recording logic here
-    navigation.navigate(MainStack.RECORDING)
-  };
+  const handleNext = useCallback(async() => {
+    setClearLoading(true)
+    authInfo.uid && await clearFirebaseFolder(
+      authInfo.uid, 
+      () => {
+        setClearLoading(false)
+        navigation.navigate(MainStack.RECORDING)}
+    )
+  }, [authInfo.uid, navigation])
 
   
   return (
@@ -55,7 +64,7 @@ export const PreRecordingScreen = ({navigation}: StackScreenProps<MainStackList,
       </View>
 
       <TouchableOpacity style={S.BUTTON} onPress={handleNext}>
-        <Text tx='common.ok' style={S.BTN_TEXT}/>
+        {!clearLoading ? <Loader /> : <Text tx='common.ok' style={S.BTN_TEXT}/>}
       </TouchableOpacity>
     </View>
     

@@ -11,6 +11,7 @@ import { RISK } from 'src/models';
 import { getApp } from '@react-native-firebase/app';
 import { store } from 'src/store';
 import { setProfile, setRecording } from 'src/screens/profile/reducer';
+import Toast from 'react-native-toast-message';
 
 
 type FinishSessionResponse = {
@@ -18,6 +19,7 @@ type FinishSessionResponse = {
   message?: string;
   sessionId: string;
   risk: RISK;
+  files: string[];
   resultObject: string;
   pdfReport: {
     filePath: string
@@ -59,6 +61,8 @@ const sleep = (ms: number) => new Promise(res => setTimeout(res, ms));
 export const finishSession = async (
   userId: string,
   sessionId: string,
+  onError?: () => void,
+  onSuccess?: () => void,
   opts?: { retries?: number; delayMs?: number; signal?: AbortSignal }
 ): Promise<FinishSessionResponse> => {
   const retries = opts?.retries ?? 6;       // total attempts = retries+1
@@ -92,7 +96,7 @@ export const finishSession = async (
           'Content-Type': 'application/json',
           Authorization: `Bearer ${idToken}`,
         },
-        body: JSON.stringify(<FinishSessionPayload>{ sessionId }),
+        body: JSON.stringify(<FinishSessionPayload>{ sessionId,  "runPendingChunks": true}),
       });
 
       clearTimeout(timeout);
@@ -134,6 +138,11 @@ export const finishSession = async (
 
       store.dispatch(setRecording(true))
 
+      data.files.length > 0 ? onSuccess?.() : Toast.show({
+        type: 'error',
+        text1: 'No files were processed.',
+      });
+
       return data;
     } catch (e) {
       clearTimeout(timeout);
@@ -148,6 +157,7 @@ export const finishSession = async (
         }
       }
       console.error('❌ finishSession error:', e);
+      onError?.();
       throw e instanceof Error ? e : new Error(String(e));
     }
   }
@@ -183,6 +193,7 @@ export const uploadAudioToFirebase = async (
         (error) => {
           unsubscribe();
           reject(error);
+          console.error('❌ uploadAudioToFirebase error:', error);
         },
         async () => {
           try {
@@ -194,6 +205,8 @@ export const uploadAudioToFirebase = async (
             // still succeed with a fallback if URL fails
             onSuccess?.();
             resolve(fileRef.fullPath);
+
+            console.log('❌ Failed to get download URL, but upload succeeded:', e);
           }
         }
       );

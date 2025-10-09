@@ -5,7 +5,6 @@ import {
   Animated,
   Easing,
 } from 'react-native';
-import DeviceBrightness from '@adrianso/react-native-device-brightness';
 
 const Immersive = NativeModules?.ImmersiveMode; // optional native module below
 
@@ -33,7 +32,6 @@ export default function IdleBlackout({
   const tweenBrightness = async (to: number, ms: number) => {
     // read current level (fallback to prev or mid)
     let from = prev.current ?? 0.5;
-    try { from = await DeviceBrightness.getBrightnessLevel(); } catch {}
     const start = Date.now();
     const easeInOutQuad = (t: number) => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t);
 
@@ -42,8 +40,6 @@ export default function IdleBlackout({
       const t = Math.min(1, (Date.now() - start) / ms);
       const eased = easeInOutQuad(t);
       const value = from + (to - from) * eased;
-      // fire-and-forget; don’t await in the loop
-      DeviceBrightness.setBrightnessLevel(value).catch(() => {});
       if (t < 1) {
         rafId.current = requestAnimationFrame(step);
       } else {
@@ -69,11 +65,6 @@ export default function IdleBlackout({
   };
 
   const sleep = async () => {
-    try {
-      if (prev.current == null) {
-        prev.current = await DeviceBrightness.getBrightnessLevel();
-      }
-    } catch { prev.current = prev.current ?? 0.5; }
 
     // hide system UI first to avoid flash
     StatusBar.setHidden(true, 'fade');
