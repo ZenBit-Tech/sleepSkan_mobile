@@ -1,10 +1,13 @@
 #!/bin/sh
 set -e
 
-cd "$CI_PRIMARY_REPOSITORY_PATH/ios"
+echo "📦 Installing CocoaPods dependencies..."
+
+# Fallback to current dir if not in Xcode Cloud
+REPO_PATH="${CI_PRIMARY_REPOSITORY_PATH:-$(pwd)}"
+cd "$REPO_PATH/ios"
 
 gem install cocoapods --user-install || true
-
-pod repo update || true
-
 pod install
+
+echo "✅ Pods installed successfully."
