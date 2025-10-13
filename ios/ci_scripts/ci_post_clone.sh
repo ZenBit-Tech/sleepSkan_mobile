@@ -2,9 +2,11 @@
 
 echo "===== Installling CocoaPods ====="
 export HOMEBREW_NO_INSTALL_CLEANUP=TRUE
+cd ..
+cd ..
 brew install cocoapods
 echo "===== Installing Node.js ====="
-brew install node@18
+brew install node@20
 echo "===== Installing yarn ====="
 brew install yarn
 
@@ -12,5 +14,5 @@ brew install yarn
 echo "===== Running yarn install ====="
 yarn install
 echo "===== Running pod install ====="
-cd ..
+cd ios
 pod install
