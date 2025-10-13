@@ -25,8 +25,9 @@ set -x || true
 /usr/bin/plutil -lint "$TARGET_PLIST"
 echo "✅ Wrote $TARGET_PLIST"
 
-# --- Versioning: set build number from Xcode Cloud
+# --- Build number (manual) ---
 cd "$IOS_DIR"
-: "${CI_BUILD_NUMBER:?CI_BUILD_NUMBER is not set by Xcode Cloud}"
-/usr/bin/agvtool new-version -all "${CI_BUILD_NUMBER}"
-echo "🔢 Updated build number to ${CI_BUILD_NUMBER}"
+CURRENT=$(/usr/bin/agvtool what-version | tail -1 | tr -d '[:space:]')
+echo "ℹ️ Current build (from project): $CURRENT"
+echo "🔢 Leaving build number unchanged."
+# (No agvtool new-version call here)
