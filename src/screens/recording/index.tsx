@@ -214,11 +214,9 @@ useEffect(() => {
       const emitter = new NativeEventEmitter(NativeModules.RecordAudioEvents);
 
       const onState = emitter.addListener('RecordAudioState', ({ state, reason }) => {
-        console.log('RecordAudioState event:', state, reason);
         if (state === 'stopped') {
-          console.log('Recording stopped. Reason:', reason);
           Toast.show({
-            type: 'error',
+            type: 'info',
             text1: 'Recording stopped.',
           })
           // stop UI timers, navigate, etc…
@@ -237,14 +235,12 @@ useEffect(() => {
       });
       
       const sub = emitter.addListener('RecordAudioChunk', async ({ path, index, success }) => {
-        console.log('Received chunk event', path, index, success)
         const chunk = {
           path,
           timestamp: Date.now(),
           sequence: index
         }
         setMyChunks(prev => [...prev, chunk])
-        console.log('success', success, 'index', index, 'path', path)
         if (!success) return;
         const fileName = `chunk_${index}.m4a`;
         await uploadAudioToFirebase(
@@ -315,52 +311,6 @@ useEffect(() => {
     }
     dispatch(setRecordingStart(true))
   }
-
-  // useEffect(() => {
-  //   if (isRecording ) {
-  //   // if (isRecording && myChunks.length > 0) {
-  //     const uploadExistingChunk = async () => {
-  //       console.log('Here')
-  //     }
-
-  //     BackgroundFetch.configure(
-  //       {
-  //         minimumFetchInterval: 31,
-  //         stopOnTerminate: false,
-  //         startOnBoot: true,
-  //         requiredNetworkType: BackgroundFetch.NETWORK_TYPE_ANY,
-  //       },
-  //       async (taskId) => {
-  //         console.log('[BackgroundFetch] taskId: ', taskId)
-  //         await uploadExistingChunk()
-  //         BackgroundFetch.finish(taskId)
-  //       },
-  //       (error) => {
-  //         console.log('[BackgroundFetch] configure error:', error)
-  //       },
-  //     )
-
-  //     BackgroundFetch.status((status) => {
-  //       switch (status) {
-  //         case BackgroundFetch.STATUS_RESTRICTED:
-  //           console.log('BackgroundFetch restricted')
-  //           break
-
-  //         case BackgroundFetch.STATUS_DENIED:
-  //           console.log('BackgroundFetch denied')
-  //           break
-
-  //         case BackgroundFetch.STATUS_AVAILABLE:
-  //           console.log('BackgroundFetch is enabled')
-  //           break
-  //       }
-  //     })
-
-  //     return () => {
-  //       BackgroundFetch.stop()
-  //     }
-  //   }
-  // }, [isRecording, myChunks])
 
   useEffect(() => {
     if (start) {
