@@ -50,6 +50,29 @@ if [ ! -f "$RN_PODS_RB" ]; then
   echo "❌ Missing $RN_PODS_RB after JS install"; exit 1
 fi
 
+# --- Patch RNLineChartView.swift after yarn install ---
+SWIFT_FILE="$ROOT_DIR/node_modules/react-native-charts-wrapper/ios/ReactNativeCharts/line/RNLineChartView.swift"
+
+if [ -f "$SWIFT_FILE" ] && ! /usr/bin/grep -q "override func layoutSubviews()" "$SWIFT_FILE"; then
+  echo "🩹 Patching RNLineChartView.swift to add layoutSubviews()..."
+  /usr/bin/awk '
+    BEGIN { inserted=0 }
+    # Insert right after the class opening brace to avoid brittle line numbers
+    /class[[:space:]]+RNLineChartView[^{]*\{/ && !inserted {
+      print $0
+      print "    override func layoutSubviews() {"
+      print "        super.layoutSubviews()"
+      print "        _chart.frame = self.bounds // Adjust the chart'\''s frame to fill the entire component'\''s bounds"
+      print "    }"
+      inserted=1
+      next
+    }
+    { print $0 }
+  ' "$SWIFT_FILE" > "$SWIFT_FILE.tmp" && mv "$SWIFT_FILE.tmp" "$SWIFT_FILE"
+else
+  echo "ℹ️ RNLineChartView.swift already patched or file missing; skipping."
+fi
+
 # --- CocoaPods (run in ios/) ---
 cd "$IOS_DIR"
 echo "📦 Ensuring CocoaPods…"
