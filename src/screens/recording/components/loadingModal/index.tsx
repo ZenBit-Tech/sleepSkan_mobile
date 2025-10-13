@@ -38,6 +38,7 @@ export const LoadingModal = ({
 
   const dispatch = useAppDispatch()
   const {t} = useTranslation()
+  const [sessionFinished, setSessionFinished] = useState<boolean>(false)
 
   useEffect(() => {
     try {
@@ -58,18 +59,21 @@ export const LoadingModal = ({
           console.log('Error chunks', error)
         }
         
-      } else if (chunks.length === 0) {
+      } else if (chunks.length === 0 && !sessionFinished) {
         setTimeout(async() => {
+          setSessionFinished(true)
           await finishSession(
             userUid, 
             'devsession-1', 
             () => {
+              setSessionFinished(false)
               Toast.show({
                 type: 'error',
-                text1: 'Ocorreu um erro.',
+                text1: `${t('errors.wrong')}`,
               });
             },
             () => {
+              setSessionFinished(false)
               Toast.show({
                 type: 'success',
                 text1: `${t('recording.success')}`,})
@@ -85,6 +89,7 @@ export const LoadingModal = ({
         type: 'error',
         text1: `${t('errors.wrong')}`,})
       deactivateKeepAwake()
+      setSessionFinished(false)
       navHome()
       console.log("Error from loading", error)
     } 

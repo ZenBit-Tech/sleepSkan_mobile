@@ -214,11 +214,11 @@ export const MainHomeScreen = ({ navigation }: StackScreenProps<MainStackList, M
               onPress={() => navigation.navigate(MainStack.PRE_RECORDING)}>
               <Text text={getBtnText()} style={styles.outlinedButtonText}/>
             </TouchableOpacity>}
-            <TouchableOpacity 
+            {/* <TouchableOpacity 
                 style={styles.bottomButtonArea} 
                 onPress={() => authInfo.uid && finishSession(authInfo.uid, 'devsession-1')}>
                 <Text text='Finish session' style={styles.outlinedButtonText}/>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
       </View>
       {/* Feedback Modal */}
       <Modal 
