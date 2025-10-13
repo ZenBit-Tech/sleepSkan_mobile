@@ -126,6 +126,22 @@ export const finishSession = async (
       const data: FinishSessionResponse =
         (await res.json().catch(() => ({ ok: true }))) as FinishSessionResponse;
 
+        const filesCount = Array.isArray((data as any).files) ? (data as any).files.length : 0;
+        const hasFiles = filesCount > 0;
+
+         // If OK but no files yet — treat as "pending" and retry
+      if (!hasFiles) {
+        if (attempt <= retries) {
+          console.warn(`finishSession OK but no files (attempt ${attempt}/${retries + 1}). Retrying in ${delayMs}ms…`);
+          await sleep(delayMs);
+          continue;
+        }
+
+        // Final attempt and still no files — surface it to user and fail
+        Toast.show({ type: 'error', text1: 'No files were processed.' });
+        throw new Error('finishSession succeeded but returned no data files after all attempts.');
+      }
+
         console.log('data', data)
       data ? await updateUser(uid, {
         recording: true,

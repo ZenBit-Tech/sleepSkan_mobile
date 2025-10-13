@@ -13,8 +13,12 @@ import { ImageStyle, TextStyle, ViewStyle } from "react-native";
     alignItems: 'center', 
     gap: 10, 
     marginTop: 42, 
-    height: 100, 
+    height: 110, 
     width: 220
+  }
+
+  export const BTN_TEXT: TextStyle = {
+    lineHeight: 20
   }
 
   export const TEXT_CTR: ViewStyle = {
