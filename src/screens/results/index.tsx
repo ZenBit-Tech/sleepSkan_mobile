@@ -98,6 +98,7 @@ export const SleepReportScreen = () => {
       const response = fetchSessionJson(authInfo.uid)
       
       response.then((res) => {
+        console.log('Fetched json results', res)
 
         const { values: mmVals, indices: mmIdxData } = downsampleMinMax(res.points, Math.floor(chartWidth / 2));
 
@@ -108,6 +109,8 @@ export const SleepReportScreen = () => {
         setPeak(res.peakSnore)
         setResultsData(data)
         setMmIdx(mmIdxData)
+      }).catch((err) => {
+        console.log('Error fetching json results', err)
       })
     }
   }, [user.profile, authInfo.uid])

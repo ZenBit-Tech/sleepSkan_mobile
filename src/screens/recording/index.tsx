@@ -10,13 +10,14 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import BackgroundService from 'react-native-background-actions';
 import RNFS from 'react-native-fs'
 import BackgroundFetch from 'react-native-background-fetch'
+import Toast from 'react-native-toast-message';
 import dayjs from 'dayjs';
 
 import { Loader, Modal, Screen, Text } from 'src/components';
 import { MainStackList } from 'src/navigation';
 import { MainStack, SCREEN_HEIGHT } from 'src/constants';
 import Header from 'src/components/header';
-import { clearFirebaseFolder, uploadAudioToFirebase } from 'src/services';
+import { uploadAudioToFirebase } from 'src/services';
 import IdleBlackout from 'src/utils/IdleBlackout';
 import { useAppDispatch } from 'src/store';
 import { setRecordingStart } from 'src/store/common';
@@ -209,12 +210,38 @@ useEffect(() => {
   useEffect(() => {
     try {
       if (Platform.OS !== 'ios' || !user?.uid) return;
+      
       const emitter = new NativeEventEmitter(NativeModules.RecordAudioEvents);
+
+      const onState = emitter.addListener('RecordAudioState', ({ state, reason }) => {
+        console.log('RecordAudioState event:', state, reason);
+        if (state === 'stopped') {
+          console.log('Recording stopped. Reason:', reason);
+          Toast.show({
+            type: 'error',
+            text1: 'Recording stopped.',
+          })
+          // stop UI timers, navigate, etc…
+        } else if (state === 'recording') {
+          Toast.show({
+            type: 'success',
+            text1: 'Recording started.',
+          })
+          // stop UI timers, navigate, etc…
+        }
+      });
+
+      const onStopped = emitter.addListener('RecordAudioStopped', ({ reason }) => {
+        // Optional dedicated event
+        console.log('RecordAudioStopped event:', reason);
+      });
+      
       const sub = emitter.addListener('RecordAudioChunk', async ({ path, index, success }) => {
+        console.log('Received chunk event', path, index, success)
         const chunk = {
           path,
           timestamp: Date.now(),
-          sequence: 0
+          sequence: index
         }
         setMyChunks(prev => [...prev, chunk])
         console.log('success', success, 'index', index, 'path', path)
@@ -228,7 +255,7 @@ useEffect(() => {
         )
       });
     
-      return () => sub.remove();
+      return () => {sub.remove(); onState.remove(); onStopped.remove();};
     } catch (error) {
       console.log('Error from useEffect', error)
     }
@@ -266,9 +293,7 @@ useEffect(() => {
 
   const handleStart = async() => {
     setClearFolder(true)
-    user && await clearFirebaseFolder(user?.uid,)
     setClearFolder(false)
-    // if (Platform.OS === 'android') await startBgService();
     if (Platform.OS === 'android') {
       await WakeLock.acquire();
       await startBgService()
@@ -353,29 +378,18 @@ useEffect(() => {
   const openLoadingModal = async() => {
     setStart(false);
     setShowLoadingModal(true)
-    // setShowStopModal(false);
     if (Platform.OS === 'android') {
       stopRecording();
       BackgroundFetch.stop()
       await WakeLock.release()
       stopBgService()
-      // setShowStopModal(false);
-      // setTimeout(() => setShowLoadingModal(true), 500);
-    }
-    if (Platform.OS === 'ios') {
+    } else if (Platform.OS === 'ios') {
       try {
         await RecordAudioService.StopAudioService()
-        // setTimeout(() => setShowLoadingModal(true), 1000);
-        // await SleepAudio.endFiniteTask();
       } catch (error) {
         console.log('Error', error)
       }
     }
-    
-    // setShowStopModal(false);
-    // // handleStopRecording()
-    // console.log('====1=====')
-    // setTimeout(() => setShowLoadingModal(true), 2000);
   };
 
   const handleStartRecording = async () => {
@@ -386,11 +400,10 @@ useEffect(() => {
     }
   };
 
-  // const timer = new Date(seconds * 1000).toISOString().substr(11, 8);
   const navHome = () => {
-    setShowLoadingModal(false)
+    setTimeout(() => {setShowLoadingModal(false)
     setShowStopModal(false)
-    navigation.navigate(MainStack.HOME)
+    navigation.navigate(MainStack.HOME)}, 2000)
   }
   
   const Content = (
@@ -424,12 +437,14 @@ useEffect(() => {
         style={S.MODAL_CTR}
         onClose={!showLoadingModal ? () => setShowStopModal(false) : () => {}}
       >
-        {showLoadingModal ? (user?.uid && <LoadingModal 
+        {showLoadingModal 
+        ? (user?.uid && <LoadingModal 
           chunks={myChunks}
           userUid={user?.uid}
           setMyChunks={setMyChunks}
           navHome={navHome}
-        /> ): <StopModal 
+        /> )
+        : <StopModal 
           onClose={() => setShowStopModal(false)} 
           openLoadingModal={openLoadingModal}
         />}

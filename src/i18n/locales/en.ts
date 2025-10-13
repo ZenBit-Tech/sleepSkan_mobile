@@ -223,7 +223,8 @@ export default {
       back: 'Back to dashboard',
       loading: 'Your results loading',
       keepOpen: 'Please do not close the application or the report  will be lost',
-      left: 'Time remaining'
+      left: 'Time remaining',
+      success: 'Your data was successfully downloaded'
     },
     results: {
       title: 'Risco de Apneia',

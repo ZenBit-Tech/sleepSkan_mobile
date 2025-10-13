@@ -28,7 +28,7 @@ export const StopModal = ({
         <Text style={CENTER_TEXT} preset='middleBold' tx='recording.notice' />
         <View style={TEXT_CTR}>
           <Text style={CENTER_TEXT} preset='header3' tx='recording.interrupt' />
-          <Text style={CENTER_TEXT} preset='header3' tx='recording.lost' />
+          {/* <Text style={CENTER_TEXT} preset='header3' tx='recording.lost' /> */}
         </View>
         <View style={BTNS_CTR}>
           <Button 
