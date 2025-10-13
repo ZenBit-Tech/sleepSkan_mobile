@@ -1,35 +1,48 @@
 #!/bin/sh
-set -e
+set -euo pipefail
+
+# Resolve paths: script lives in ios/ci_scripts → we want ios/
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+IOS_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+cd "$IOS_DIR"
 
 echo "📁 Running from: $(pwd)"
 
-# Sanity check: ensure we're really in ios/
+# Sanity check
 if [ ! -f "Podfile" ]; then
-  echo "❌ Podfile not found in $(pwd). ci_post_clone.sh must live in ios/ci_scripts/"
+  echo "❌ Podfile not found at: $IOS_DIR"
   exit 1
 fi
 
 echo "📦 Installing CocoaPods (if needed)…"
-ruby -v
-which gem
+# Ensure user gem bin is on PATH (helps in CI)
+export GEM_HOME="$HOME/.gem"
+export PATH="$GEM_HOME/bin:$PATH"
 
-# Install CocoaPods to user gem path (idempotent)
-gem install cocoapods --user-install || true
+ruby -v || true
+which gem  || true
 
-# Ensure 'pod' is available on PATH (Xcode Cloud sometimes needs the explicit path)
-if ! command -v pod >/dev/null 2>&1; then
-  POD_EXEC=$(find ~/.gem -name pod -type f | head -n 1)
-  if [ -z "$POD_EXEC" ]; then
-    echo "❌ 'pod' CLI not found after gem install"
-    exit 1
-  fi
+# Install cocoapods (idempotent)
+gem install cocoapods --user-install --no-document || true
+
+# Locate pod executable (Xcode Cloud sometimes needs explicit path)
+if command -v pod >/dev/null 2>&1; then
+  POD_EXEC="$(command -v pod)"
 else
-  POD_EXEC=$(command -v pod)
+  POD_EXEC="$(/usr/bin/find "$GEM_HOME" -name pod -type f | head -n 1 || true)"
 fi
+
+if [ -z "${POD_EXEC:-}" ]; then
+  echo "❌ 'pod' CLI not found after gem install"
+  exit 1
+fi
+echo "🛠 Using pod at: $POD_EXEC"
 
 echo "🔧 Running pod install…"
 "$POD_EXEC" install --verbose
 
 echo "✅ Pods installed."
-echo "📁 Verifying generated Pod files…"
-ls -la "Pods/Target Support Files/Pods-SleepScan/" || echo "⚠️ Could not list Pods-SleepScan folder (double-check target name)"
+
+echo "🔎 Verifying generated Pod files (xcconfig/xcfilelist)…"
+# List all xcfilelists; target folder names can vary
+/usr/bin/find "Pods/Target Support Files" -maxdepth 2 -name "*.xcfilelist" -print || true
