@@ -102,8 +102,8 @@ export const SleepReportScreen = () => {
 
         const { values: mmVals, indices: mmIdxData } = downsampleMinMax(res.points, Math.floor(chartWidth / 2));
 
-        const data = mmVals.map(v => ({ value: v + 94}));
-        // const data = res.points.map((v: number) => ({ value: v + 94}));
+        // const data = mmVals.map(v => ({ value: v + 94}));
+        const data = res.points.map((v: number) => ({ value: v + 94}));
         setTotalSleep(res.totalSeconds)
         setTotalSnore(res.totalSnoringSec)
         setPeak(res.peakSnore)

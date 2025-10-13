@@ -64,7 +64,13 @@ export const Main_Stack = () => {
         options={{
           gestureEnabled: false,          
         }} />
-      <Stack.Screen name={MainStack.PRE_RECORDING} component={PreRecordingScreen} />
+      <Stack.Screen 
+        name={MainStack.PRE_RECORDING} 
+        component={PreRecordingScreen} 
+        options={{
+          gestureEnabled: false,          
+        }}
+      />
       <Stack.Screen 
         name={MainStack.REPORT} 
         component={SleepReportScreen} 
