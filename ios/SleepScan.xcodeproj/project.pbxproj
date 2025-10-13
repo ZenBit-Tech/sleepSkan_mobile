@@ -17,6 +17,7 @@
 		BD09505A2E92E727006381F9 /* SleepAudio.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD0950592E92E727006381F9 /* SleepAudio.swift */; };
 		BD09505C2E92E736006381F9 /* SleepAudioBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = BD09505B2E92E736006381F9 /* SleepAudioBridge.m */; };
 		BD3B33772E6DFCA8000F96C6 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BD3B33762E6DFCA8000F96C6 /* GoogleService-Info.plist */; };
+		BD5E08F12E9CFD4700AAACD4 /* ci_post_clone.sh in Resources */ = {isa = PBXBuildFile; fileRef = BD5E08F02E9CFD4700AAACD4 /* ci_post_clone.sh */; };
 		CD5AAC3F45A84A7FB7469447 /* Orbitron-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CCB90482E091463A9B168B68 /* Orbitron-SemiBold.ttf */; };
 		D725204B6CFBB5579B4127D8 /* Pods_SleepScan.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C46ABFB562085BF107B29D5 /* Pods_SleepScan.framework */; };
 /* End PBXBuildFile section */
@@ -36,6 +37,7 @@
 		BD09505B2E92E736006381F9 /* SleepAudioBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SleepAudioBridge.m; sourceTree = "<group>"; };
 		BD09505D2E92E739006381F9 /* SleepScan-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SleepScan-Bridging-Header.h"; sourceTree = "<group>"; };
 		BD3B33762E6DFCA8000F96C6 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		BD5E08F02E9CFD4700AAACD4 /* ci_post_clone.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = ci_post_clone.sh; sourceTree = "<group>"; };
 		BDF0569A2E8FF52200320CA9 /* SleepScan.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = SleepScan.entitlements; path = SleepScan/SleepScan.entitlements; sourceTree = "<group>"; };
 		C30D2F5926BA480AA5054828 /* Manrope-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Manrope-Regular.ttf"; path = "../assets/fonts/Manrope-Regular.ttf"; sourceTree = "<group>"; };
 		C6DFB72C4E0057C09CB33101 /* Pods-SleepScan.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SleepScan.release.xcconfig"; path = "Target Support Files/Pods-SleepScan/Pods-SleepScan.release.xcconfig"; sourceTree = "<group>"; };
@@ -90,6 +92,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				BD5E08EF2E9CFD1200AAACD4 /* ci_scripts */,
 				BD3B33762E6DFCA8000F96C6 /* GoogleService-Info.plist */,
 				13B07FAE1A68108700A75B9A /* SleepScan */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
@@ -129,6 +132,14 @@
 				C6DFB72C4E0057C09CB33101 /* Pods-SleepScan.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		BD5E08EF2E9CFD1200AAACD4 /* ci_scripts */ = {
+			isa = PBXGroup;
+			children = (
+				BD5E08F02E9CFD4700AAACD4 /* ci_post_clone.sh */,
+			);
+			path = ci_scripts;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -196,6 +207,7 @@
 				BD3B33772E6DFCA8000F96C6 /* GoogleService-Info.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				599B57D0EE2644ED9DE78D7C /* PrivacyInfo.xcprivacy in Resources */,
+				BD5E08F12E9CFD4700AAACD4 /* ci_post_clone.sh in Resources */,
 				50489797EF274165BD91E91B /* Manrope-Bold.ttf in Resources */,
 				5D144DDB1F16435196B46BBC /* Manrope-Regular.ttf in Resources */,
 				49932DBE12B84FF39CDB4795 /* Manrope-SemiBold.ttf in Resources */,
