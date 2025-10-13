@@ -7,7 +7,7 @@ import {
 import { TxKeyPath } from 'src/i18n';
 import { Button, SVGIcon, Text } from 'src/components';
 
-import { BTNS_CTR, CENTER_ITEMS, CENTER_TEXT, MODAL_CTR, TEXT_CTR } from './styles';
+import { BTN_TEXT, BTNS_CTR, CENTER_ITEMS, CENTER_TEXT, MODAL_CTR, TEXT_CTR } from './styles';
 
 type Props = {
   onClose: () => void
@@ -34,10 +34,12 @@ export const StopModal = ({
           <Button 
             tx='recording.continue'
             onPress={onClose}
+            textStyle={BTN_TEXT}
           />
           <Button 
             preset='transparent'
             tx='recording.back'
+            textStyle={BTN_TEXT}
             onPress={openLoadingModal}
           />
         </View>
