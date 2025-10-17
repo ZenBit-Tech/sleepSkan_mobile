@@ -6,13 +6,13 @@ import {
   setDoc,
   updateDoc,
 } from '@react-native-firebase/firestore';
+import firestore from '@react-native-firebase/firestore';
 
 import dayjs from 'dayjs';
 import { RISK } from 'src/models';
 import { setProfile } from 'src/screens/profile/reducer';
 import { store } from 'src/store';
 
-// import { Profile } from "../types";
 
 type CreateUserData = {
   email: string | null;
@@ -42,6 +42,7 @@ type UserData = {
   risk?: RISK;
   recording_results?: string;
   pdf_file?: string;
+  start_recording_time?: number
 };
 
 export const defaultProfile: Omit<{email: string, name: string, createdAt: string}, 'id'> = {
@@ -68,6 +69,31 @@ export const createUser = async (userId: string, data: CreateUserData) => {
     throw error;
   }
 };
+
+export const submitFeedback = async (input: {
+  type: 'doctor_appointment' | 'prescription' | 'investigation';
+  uid?: string
+}) => {
+
+  if (!input.uid) throw new Error('Not signed in');
+
+  const userDoc = await firestore().doc(`users/${input.uid}`).get();
+  const u = userDoc.data() ?? {};
+  const now = firestore.FieldValue.serverTimestamp();
+
+  const memberRef = firestore().doc(`feedbacks/${input.type}/users/${input.uid}`);
+  await memberRef.set({
+    userId: input.uid,
+    userRef: userDoc.ref,
+    firstName: u.firstName ?? '',
+    lastName:  u.lastName  ?? '',
+    email:     u.email ?? '',
+    addedAt: now,
+    lastFeedbackAt: now,
+    count: firestore.FieldValue.increment(1),
+  }, { merge: true });
+
+}
 
 export const getUser = async (userId: string) => {
   try {

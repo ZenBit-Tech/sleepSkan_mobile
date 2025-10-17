@@ -247,7 +247,8 @@ export default {
       construction: 'This page is still under construction.',
       prescription: ' If you’re interested in requesting a prescription for a sleep test, click below and we’ll notify you as soon as it’s available.',
       noticeBtn: 'Notify Me When Available',
-      physician: 'If you’re interested in speaking to a physician, click below and we’ll notify you as soon as it’s available.'
+      physician: 'If you’re interested in speaking to a physician, click below and we’ll notify you as soon as it’s available.',
+      investigation: ' If you’re interested in sleep studing, click below and we’ll notify you as soon as it’s available.'
     }
   },
 };
