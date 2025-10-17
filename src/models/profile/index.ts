@@ -41,6 +41,7 @@ export interface IProfile {
   recording?: boolean;
   recording_results?: string;
   pdf_file?: string;
+  start_recording_time?: number
 }
 
 export enum COFFEE_VARIANTS {

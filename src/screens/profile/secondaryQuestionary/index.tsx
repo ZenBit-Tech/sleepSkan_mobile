@@ -217,7 +217,7 @@ const sendAnswer = async() => {
             onPress={sendAnswer} 
             preset="transparent" 
             pending={loading} 
-            disabled={loading}
+            disabled={questionSecondaryNumber === 7 ? (medicines.length === 0 || loading) : loading}
             tx={questionSecondaryNumber === 7 ? "profile.getResults" : "common.next"} 
           />
         </View>

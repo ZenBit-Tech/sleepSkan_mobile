@@ -79,8 +79,8 @@ export const LoadingModal = ({
                 text1: `${t('recording.success')}`,})
             }
           )
-          deactivateKeepAwake()
           dispatch(setRecordingStart(false))
+          deactivateKeepAwake()
           navHome()
         }, 1000)
       }

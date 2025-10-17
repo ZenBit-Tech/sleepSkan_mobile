@@ -206,8 +206,8 @@ export default {
     results: {
       title: 'Risco de Apneia',
       low: 'BAIXO',
-      high: 'MÉDIO',
-      moderate: 'ALTO',
+      high: 'ALTO',
+      moderate: 'MÉDIO',
       snoreCount: 'Frequência do ronco: ',
       interval: 'Intervalo médio entre roncos: ',
       seconds: 'segundos',
@@ -224,7 +224,8 @@ export default {
       construction: 'Esta página ainda está em construção.',
       prescription: ' Se estiver interessado em solicitar uma prescrição para um estudo do sono, clique abaixo e será notificado assim que esta função estiver disponível.',
       noticeBtn: 'Notifique-me quando estiver disponível',
-      physician: 'Se estiver interessado em falar com um médico, clique abaixo e será notificado assim que esta função estiver disponível.'
+      physician: 'Se estiver interessado em falar com um médico, clique abaixo e será notificado assim que esta função estiver disponível.',
+      investigation: ' If you’re interested in sleep studing, click below and we’ll notify you as soon as it’s available.'
     }
   },
 };

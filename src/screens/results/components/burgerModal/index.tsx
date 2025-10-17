@@ -12,12 +12,12 @@ interface BurgerModalProps {
     onClose: () => void
     onModalOpen: () => void
     onDownload: () => void
-    setDesiredService: (service: 'doctor_appointment' | 'prescription' | undefined) => void
+    setDesiredService: (service: 'doctor_appointment' | 'prescription' | 'investigation' | undefined) => void
 }
 
 export const BurgerModal = ({onClose, onDownload, setDesiredService, onModalOpen, showBurgerModal}: BurgerModalProps) => {
     
-  const handleNoticeModalOpen = (desiredService: 'doctor_appointment' | 'prescription' | undefined) => {
+  const handleNoticeModalOpen = (desiredService: 'doctor_appointment' | 'prescription' | 'investigation' | undefined) => {
     setDesiredService(desiredService)
     onClose()
     setTimeout(() => onModalOpen(), 500) 
@@ -55,7 +55,7 @@ export const BurgerModal = ({onClose, onDownload, setDesiredService, onModalOpen
             />
             
           </TouchableOpacity>
-          <TouchableOpacity style={S.MODAL_TEXT_CTR} onPress={() => handleNoticeModalOpen('prescription')}>
+          <TouchableOpacity style={S.MODAL_TEXT_CTR} onPress={() => handleNoticeModalOpen('investigation')}>
             <Text 
               preset='header3bold'
               color={colors.darkText} 
