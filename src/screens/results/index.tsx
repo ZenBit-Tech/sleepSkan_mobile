@@ -13,6 +13,7 @@ import { useFocusEffect } from '@react-navigation/native';
 //@ts-ignore
 import { LineChart } from 'react-native-charts-wrapper';
 import { processColor } from 'react-native';
+import { StackScreenProps } from '@react-navigation/stack';
  
 import { Loader, MainHeader, Modal, Screen, Text } from 'src/components';
 import { colors } from 'src/theme';
@@ -22,8 +23,9 @@ import { getUserInfo } from 'src/services/user';
 import { TxKeyPath } from 'src/i18n';
 import { downloadPdfToDevice, fetchSessionJson } from 'src/services';
 import { countSnorePercentage, downsampleMinMax, secondsToHM } from 'src/utils';
-import { SCREEN_WIDTH } from 'src/constants';
+import { MainStack, SCREEN_WIDTH } from 'src/constants';
 import { IS_ANDROID } from 'src/constants/common';
+import { MainStackList } from 'src/navigation';
 
 import * as S from './styles'
 import { StatCard } from './components/card';
@@ -35,7 +37,7 @@ const snorePerMin = 2
 const avgIntervalSec = 34
 const threshold = 52
 
-export const SleepReportScreen = () => {
+export const SleepReportScreen = ({navigation}: StackScreenProps<MainStackList, MainStack.REPORT>) => {
 
   const {t} = useTranslation();
   const authInfo = useSelector(authSelector);
@@ -45,20 +47,29 @@ export const SleepReportScreen = () => {
   const [nonce, setNonce] = useState(0); 
   const [totalSleep, setTotalSleep] = useState<number>(0); 
   const [totalSnore, setTotalSnore] = useState<number>(0); 
+  const [snorePercentage, setSnorePercentage] = useState<number>(0); 
+  const [snoreFrequency, setSnoreFrequency] = useState<number>(0); 
+  const [averageSnoreIntervalSec, setAverageSnoreIntervalSec] = useState<number>(0); 
+  const [trimmedLeadSeconds, setTrimmedLeadSeconds] = useState<number>(0); 
   const [peak, setPeak] = useState<number>(0); 
   const [showBurgerModal, setShowBurgerModal] = useState<boolean>(false)
   const [showNoticeModal, setShowNoticeModal] = useState<boolean>(false)
-  const [desiredService, setDesiredService] = useState<'doctor_appointment' | 'prescription' | undefined>(undefined)
+  const [desiredService, setDesiredService] = useState<'doctor_appointment' | 'prescription' | 'investigation' | undefined>(undefined)
   const [mmIdx, setMmIdx] = useState<number[]>([])
 
   const chartWidth = useMemo(() => 2*SCREEN_WIDTH, [SCREEN_WIDTH])
 
 
   //===============react-native-charts-wrapper=====
+  // const startTimeSec = (1760597779914 + 600000)
+  const onePointDuration = totalSleep / resultsData.length
+
+  const startTimeSec = useMemo(() => user.profile?.start_recording_time && user.profile?.start_recording_time + 30000, [user.profile?.start_recording_time, trimmedLeadSeconds])
+  
 
   const lineValues = useMemo(
-    () => resultsData.map((p, i) => ({ x: i, y: p.value })),
-    [resultsData]
+    () => resultsData.map((p, i) => ({ x: i * onePointDuration, y: p.value })),
+    [resultsData, totalSleep]
   );
 
   const chartRef = useRef(null);
@@ -107,6 +118,10 @@ export const SleepReportScreen = () => {
         setTotalSleep(res.totalSeconds)
         setTotalSnore(res.totalSnoringSec)
         setPeak(res.peakSnore)
+        setSnorePercentage(res.snoringPercent ? res.snoringPercent.toFixed(0) : countSnorePercentage({totalSleep: res.totalSeconds, snore: res.totalSnoringSec}))
+        setSnoreFrequency(res.snoreFrequency ? res.snoreFrequency.toFixed(1) : 0)
+        setAverageSnoreIntervalSec(res.averageSnoreIntervalSec ? res.averageSnoreIntervalSec.toFixed(0) : 0)
+        setTrimmedLeadSeconds(res.trimmedLeadSeconds)
         setResultsData(data)
         setMmIdx(mmIdxData)
       }).catch((err) => {
@@ -154,6 +169,7 @@ const yTicks = Array.from({ length: 10 + 1 }, (_, i) => 30 + i * 5);
     <Screen 
       customHeader={<MainHeader 
                       withBack 
+                      handleGoBack={() => navigation.navigate(MainStack.HOME)}
                       withBurger 
                       onRightIconPress={onModalOpen} />} 
       preset='scroll'
@@ -174,10 +190,10 @@ const yTicks = Array.from({ length: 10 + 1 }, (_, i) => 30 + i * 5);
 
         <View style={S.DESCR_CTR}>
           <Text preset='header5bold'>
-            {t('results.snoreCount') } {snorePerMin} {t('results.perMin') }
+            {t('results.snoreCount') } {snoreFrequency} {t('results.perMin') }
           </Text>
           <Text preset='header5bold'>
-          {t('results.interval') } {avgIntervalSec} {t('results.seconds') }
+          {t('results.interval') } {averageSnoreIntervalSec} {t('results.seconds') }
           </Text>
         </View>
 
@@ -221,11 +237,15 @@ const yTicks = Array.from({ length: 10 + 1 }, (_, i) => 30 + i * 5);
             position: 'BOTTOM',
             drawGridLines: false,
             drawAxisLine: false,
+            valueFormatter: 'date',
+            valueFormatterPattern: 'HH:mm',   // 24h HH:MM
+            since: startTimeSec,               // epoch (ms)
+            timeUnit: 'SECONDS',
             granularityEnabled: true,
-            granularity: 1,
+            granularity: 1 * onePointDuration, // minimum axis-step (ms)
             textColor: processColor(colors.greyDark_06),
             // optional: hide x labels entirely
-            drawLabels: false,
+            // drawLabels: false,
           }}
     
           yAxis={{
@@ -249,19 +269,19 @@ const yTicks = Array.from({ length: 10 + 1 }, (_, i) => 30 + i * 5);
           touchEnabled={true}
     
           // show only a window of points, enable horizontal pan
-          visibleRange={{
-            x: {
-              min: Math.min(VISIBLE_POINTS, Math.max(1, lineValues.length)),
-              max: Math.min(VISIBLE_POINTS, Math.max(1, lineValues.length)),
-            },
-          }}
-          viewPortOffsets={{ left: IS_ANDROID ? 55 : 25, right: 0, top: 0, bottom: 10 }}
-          onLayout={() => {
-            if (!isIOS || lineValues.length === 0) return;
-            const window = Math.max(1, Math.min(VISIBLE_POINTS, lineValues.length));
-            const scaleX = Math.max(1, lineValues.length / window);
-            const xValue = Math.max(0, lineValues.length - window);
-          }}
+          // visibleRange={{
+          //   x: {
+          //     min: Math.min(VISIBLE_POINTS, Math.max(1, lineValues.length)),
+          //     max: Math.min(VISIBLE_POINTS, Math.max(1, lineValues.length)),
+          //   },
+          // }}
+          viewPortOffsets={{ left: IS_ANDROID ? 55 : 25, right: 20, top: 0, bottom: 20 }}
+          // onLayout={() => {
+          //   if (!isIOS || lineValues.length === 0) return;
+          //   const window = Math.max(1, Math.min(VISIBLE_POINTS, lineValues.length));
+          //   const scaleX = Math.max(1, lineValues.length / window);
+          //   const xValue = Math.max(0, lineValues.length - window);
+          // }}
         />
         </ScrollView>
           // ? <ScrollView
@@ -306,7 +326,8 @@ const yTicks = Array.from({ length: 10 + 1 }, (_, i) => 30 + i * 5);
           />
           <StatCard
             title='results.snoring'
-            value={countSnorePercentage({totalSleep, snore: totalSnore})}
+            value={`${snorePercentage}%`}
+            // value={countSnorePercentage({totalSleep, snore: totalSnore})}
           />
           <StatCard
             title='results.snoringTime'
@@ -332,6 +353,7 @@ const yTicks = Array.from({ length: 10 + 1 }, (_, i) => 30 + i * 5);
       >
         <NoticeModal
           desiredService={desiredService}
+          userUid={authInfo.uid || ''}
           onClose={() => setShowNoticeModal(false)}
         />
        </Modal>

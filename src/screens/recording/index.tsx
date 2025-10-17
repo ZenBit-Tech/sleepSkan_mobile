@@ -21,6 +21,7 @@ import { uploadAudioToFirebase } from 'src/services';
 import IdleBlackout from 'src/utils/IdleBlackout';
 import { useAppDispatch } from 'src/store';
 import { setRecordingStart } from 'src/store/common';
+import { updateUser } from 'src/db';
 
 import * as S from './styles'
 import { StopModal } from './components/stopModal';
@@ -264,7 +265,10 @@ useEffect(() => {
     autoStartRecording: false,
     defaultRecordingOptions: {
       chunkSeconds: 600,
-      maxRecordingDuration: 43200
+      maxRecordingDuration: 50400
+    },
+    onMaxDurationReached: () => {
+      handleStartRecording()
     },
     onChunkReady: async (chunk) => {
       setMyChunks(prev => [...prev, chunk])
@@ -288,8 +292,10 @@ useEffect(() => {
   });
 
   const handleStart = async() => {
-    setClearFolder(true)
-    setClearFolder(false)
+    await activateKeepAwake()
+    // setClearFolder(true)
+    // setClearFolder(false)
+    user?.uid && await updateUser(user?.uid, {start_recording_time: Date.now()})
     if (Platform.OS === 'android') {
       await WakeLock.acquire();
       await startBgService()
@@ -314,7 +320,7 @@ useEffect(() => {
 
   useEffect(() => {
     if (start) {
-       activateKeepAwake()
+       
        handleStart()
     } else {
       if (intervalRef.current) clearInterval(intervalRef.current);
@@ -353,7 +359,7 @@ useEffect(() => {
   const navHome = () => {
     setTimeout(() => {setShowLoadingModal(false)
     setShowStopModal(false)
-    navigation.navigate(MainStack.HOME)}, 2000)
+    navigation.navigate(MainStack.REPORT)}, 2000)
   }
   
   const Content = (

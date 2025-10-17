@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { StackScreenProps } from '@react-navigation/stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
+import Toast from 'react-native-toast-message';
 
 import { Screen, Text, Modal, Loader } from 'src/components';
 import { SVGIcon } from 'src/components/svg-icon';
@@ -76,7 +77,23 @@ export const MainHomeScreen = ({ navigation }: StackScreenProps<MainStackList, M
 
   useFocusEffect(useCallback(() => {
     const handleFinishSession = async() => {
-      authInfo.uid && await finishSession(authInfo.uid, 'devsession-1')
+      authInfo.uid && await finishSession(
+        authInfo.uid, 
+        'devsession-1',
+      () => {
+        Toast.show({
+          type: 'error',
+          text1: `${t('errors.wrong')}`,
+        });
+      },
+      () => {
+        dispatch(setRecordingStart(false))
+        authInfo.uid && getUserInfo(authInfo.uid)
+        Toast.show({
+          type: 'success',
+          text1: `${t('recording.success')}`
+        })
+      })
       authInfo.uid && dispatch(setRecordingStart(false))
     }
     if (startedRecording.recordingStart) {

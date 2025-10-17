@@ -13,7 +13,7 @@ export function secondsToHM(seconds: number): string {
   export const countSnorePercentage = ({totalSleep, snore}: {totalSleep: number, snore: number}) => {
     const percents = snore * 100 / totalSleep
 
-    return `${Math.round(percents)}%`
+    return Math.round(percents)
   }
 
   // helpers
