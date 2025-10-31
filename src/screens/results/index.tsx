@@ -109,7 +109,6 @@ export const SleepReportScreen = ({navigation}: StackScreenProps<MainStackList, 
       const response = fetchSessionJson(authInfo.uid)
       
       response.then((res) => {
-        console.log('Fetched json results', res)
 
         const { values: mmVals, indices: mmIdxData } = downsampleMinMax(res.points, Math.floor(chartWidth / 2));
 
@@ -318,20 +317,20 @@ const yTicks = Array.from({ length: 10 + 1 }, (_, i) => 30 + i * 5);
         <View style={S.GRID}>
           <StatCard
             title='results.snoreIntensity'
-            value={`${Math.round(peak + 94)} dB`}
+            value={canRender ? `${Math.round(peak + 94)} dB` : ''}
           />
           <StatCard
             title='results.sleepTime'
-            value={secondsToHM(totalSleep)}
+            value={canRender ? secondsToHM(totalSleep) : ''}
           />
           <StatCard
             title='results.snoring'
-            value={`${snorePercentage}%`}
+            value={canRender ? `${snorePercentage}%` : ''}
             // value={countSnorePercentage({totalSleep, snore: totalSnore})}
           />
           <StatCard
             title='results.snoringTime'
-            value={secondsToHM(totalSnore)}
+            value={canRender ? secondsToHM(totalSnore) : ''}
           />
         </View>
       </View>

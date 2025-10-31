@@ -1,28 +1,28 @@
 // Background
-export const BG = require('../../assets/images/background.png');
+export const BG = require('../../assets/images/background-min.png');
 
 // Common
 export const CLOUD_IMG = require('../../assets/images/cloud.png');
 export const HEADER_IMG = require('../../assets/images/headerImage.png');
 
 // Onboarding
-export const ONBOARDING_STEP_1_IMG = require('../../assets/images/onboarding/step-1.png');
-export const ONBOARDING_STEP_2_IMG = require('../../assets/images/onboarding/step-2.png');
-export const ONBOARDING_STEP_3_IMG = require('../../assets/images/onboarding/step-3.png');
+export const ONBOARDING_STEP_1_IMG = require('../../assets/images/onboarding/step-1-min.png');
+export const ONBOARDING_STEP_2_IMG = require('../../assets/images/onboarding/step-2-min.png');
+export const ONBOARDING_STEP_3_IMG = require('../../assets/images/onboarding/step-3-min.png');
 export const ENERGY_HEART_IMG = require('../../assets/images/onboarding/energy-heart.png');
 export const HEART_IMG = require('../../assets/images/onboarding/heart.png');
 export const LIVER_IMG = require('../../assets/images/onboarding/liver.png');
 export const BRAIN_IMG = require('../../assets/images/onboarding/brain.png');
 export const DEATH_IMG = require('../../assets/images/onboarding/death.png');
 export const SYRINGE_IMG = require('../../assets/images/onboarding/syringe.png');
-export const NECK_SIZE_IMG = require('../../assets/images/onboarding/neck.png');
+export const NECK_SIZE_IMG = require('../../assets/images/onboarding/neck-min.png');
 
 // Auth
 
 export const LOGO_IMG = require('../../assets/images/logo.png')
 
 // Recording
-export const BED_IMG = require('../../assets/images/bed.png')
+export const BED_IMG = require('../../assets/images/bed-min.png')
 export const PILLOW_IMG = require('../../assets/images/pillow.png')
 
 // export const SIGN_UP_BG = require('../../assets/images/auth/sign_up_bg.png')

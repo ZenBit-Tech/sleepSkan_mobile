@@ -1,0 +1,24 @@
+# android/fastlane/Appfile
+
+# The package name of your app
+def get_package_name
+    gradle_file_path = File.expand_path("../app/build.gradle", __dir__)
+    unless File.exist?(gradle_file_path)
+      UI.user_error!("❌ Could not find app/build.gradle at #{gradle_file_path}")
+    end
+  
+    gradle_file = File.read(gradle_file_path)
+    match = gradle_file.match(/applicationId\s+["'](.+?)["']/)
+    if match
+      return match[1]
+    else
+      UI.user_error!("❌ Could not find applicationId in #{gradle_file_path}")
+    end
+  end
+
+
+# Path to your Firebase service key (for App Distribution)
+firebase_credentials_path("fastlane/firebase_builds_key.json")
+
+# Optional: name to appear in logs
+project_identifier("Deafcom Android")

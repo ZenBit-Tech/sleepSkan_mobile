@@ -1,0 +1,32 @@
+  default_platform(:android)
+  
+  platform :android do
+  desc "Build and upload both APK and AAB to Firebase App Distribution"
+  lane :firebase_beta do
+
+    # 🧱 Build both formats
+    gradle(task: "assembleRelease")
+    gradle(task: "bundleRelease")
+  
+    # ✅ Upload to Firebase
+    firebase_app_distribution(
+        app: "1:779757676809:android:0f0268d7cacf4b9fbbcbd8",
+        service_credentials_file: "fastlane/firebase_builds_key.json",
+        android_artifact_path: "app/build/outputs/apk/release/app-release.apk",
+        android_artifact_type: "APK",
+        release_notes: "APK build for internal testing", 
+      )  
+  
+     # Upload AAB
+  #      firebase_app_distribution(
+  #         app: firebase_app_id,
+  #         service_credentials_file: firebase_key_file_path,
+  #         android_artifact_path: "app/build/outputs/bundle/release/app-release.aab",
+  #         android_artifact_type: "AAB",
+  #         release_notes: "Manual AAB upload without Play link",
+  #         debug: true
+  # )
+  end
+  end
+  
+  

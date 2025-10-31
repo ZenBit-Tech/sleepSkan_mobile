@@ -78,3 +78,10 @@ yarn-error.log
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+# Fastlane artifacts
+firebase_builds_key.json
+fastlane/report.xml
+fastlane/Preview.html
+*/fastlane/screenshots
+**/fastlane/test_output
