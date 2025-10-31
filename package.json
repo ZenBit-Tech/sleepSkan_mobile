@@ -10,7 +10,6 @@
     "test": "jest"
   },
   "dependencies": {
-    "@adrianso/react-native-device-brightness": "^1.2.7",
     "@asolerp/react-native-audio-chunk-recorder": "^0.3.11",
     "@react-native-async-storage/async-storage": "^2.2.0",
     "@react-native-community/blur": "^4.4.1",
@@ -39,14 +38,11 @@
     "react-native-charts-wrapper": "^0.6.0",
     "react-native-date-picker": "^5.0.13",
     "react-native-dotenv": "^3.4.11",
-    "react-native-file-viewer": "^2.1.5",
     "react-native-fs": "^2.20.0",
     "react-native-gesture-handler": "^2.27.1",
-    "react-native-gifted-charts": "^1.4.64",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-linear-gradient": "^2.8.3",
     "react-native-modal": "^14.0.0-rc.1",
-    "react-native-pdf": "^6.7.7",
     "react-native-permissions": "^5.4.2",
     "react-native-reanimated": "^4.1.2",
     "react-native-safe-area-context": "^5.5.1",
