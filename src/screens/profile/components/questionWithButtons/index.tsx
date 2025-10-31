@@ -23,12 +23,13 @@ export const QuestionWithButtons  = ({answer, question, setAnswer}: IQuestionWit
   return (
     <View style={S.GAP}>
       <View style={S.ROW}>
-        <Text style={S.TEXT_CENTER}>
-        {question.tooltip && <TouchableOpacity ref={infoRef} style={S.BTN_HEIGHT} onPress={() => setShowTip(true)}>
-          <SVGIcon name="info" size={18} color={colors.white07} style={S.INFO_ICON} />
-        </TouchableOpacity>}
-         <Text preset="middleBold" style={S.TEXT_CENTER} tx={question.question} />
-         </Text>
+        <Text preset="middleBold" style={S.TEXT_CENTER}>
+        {' '}
+          {question.tooltip && <TouchableOpacity ref={infoRef} style={S.BTN_HEIGHT} onPress={() => setShowTip(true)}>
+            <SVGIcon name="info" size={18} color={colors.white07} style={S.INFO_ICON} />
+          </TouchableOpacity>}
+            <Text preset="middleBold" style={S.TEXT_CENTER} tx={question.question} />
+        </Text>
          <InfoTooltip
           anchorRef={infoRef}
           visible={showTip}
