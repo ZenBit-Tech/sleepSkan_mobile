@@ -34,7 +34,7 @@ export const CleanStorage = ({
             <Text preset='header3' tx='home.deleteDescr' style={S.CENTER_TEXT} />
             <Text preset='header3' tx='home.sureClean' style={S.CENTER_TEXT} />
           </View>}
-        <View style={{marginVertical: 60, gap: 20, alignItems: 'center'}}>
+        <View style={S.BTNS_CTR}>
           <Button 
             preset='secondary'
             onPress={clearStorage}

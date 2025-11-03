@@ -9,7 +9,7 @@ import Toast from 'react-native-toast-message';
 
 import { Screen, Text, Modal, Loader } from 'src/components';
 import { SVGIcon } from 'src/components/svg-icon';
-import { colors, typography } from 'src/theme';
+import { colors } from 'src/theme';
 import { IconTypes } from 'src/components/svg-icon/icons';
 import { auth, common, profileInfo } from 'src/store/selectors';
 import { getUserInfo } from 'src/services/user';
@@ -41,6 +41,7 @@ import {
   getWeightDescr 
 } from './components/helpers';
 import { setRecording } from '../profile/reducer';
+import * as S from './styles'
 
 
 export interface ICard {
@@ -118,9 +119,9 @@ export const MainHomeScreen = ({ navigation }: StackScreenProps<MainStackList, M
   }
 
   const renderItem = ({ item }: { item: ICard }) => (
-    <TouchableOpacity style={styles.feedbackCard} onPress={() => setShowModal(item.name)}>
-      <SVGIcon name={item.icon} size={32} color={item.color} />
-      <Text preset="header4" style={[styles.feedbackCardLabel, { color: item.color }]}>{item.label}</Text>
+    <TouchableOpacity style={S.FEEDBACK_CARD} onPress={() => setShowModal(item.name)}>
+      <SVGIcon name={item.icon} size={24} color={item.color} />
+      <Text preset="header4" style={[S.FEEDBACK_LABEL, { color: item.color }]}>{item.label}</Text>
     </TouchableOpacity>
   );
 
@@ -149,6 +150,7 @@ export const MainHomeScreen = ({ navigation }: StackScreenProps<MainStackList, M
     } 
   }, [authInfo.uid])
 
+  // NEED FOR TESTS
   // const handleCleanAndStartNew = async () => {
   //   setLoading(true)
   //   authInfo.uid && await clearFirebaseFolder(authInfo.uid)
@@ -158,26 +160,26 @@ export const MainHomeScreen = ({ navigation }: StackScreenProps<MainStackList, M
   // }
 
   return (
-    <Screen customHeader={<Header withLogout />}  preset={SCREEN_HEIGHT > 750 ? 'fixed' : 'scroll'}>
-      <View style={[styles.container, {paddingBottom: insets.bottom + 40}]}>
+    <Screen customHeader={<Header withLogout />}  preset={SCREEN_HEIGHT > (750 + insets.bottom) ? 'fixed' : 'scroll'}>
+      <View style={[S.CONTAINER, SCREEN_HEIGHT > (750 + insets.bottom) && {height: SCREEN_HEIGHT - insets.top - insets.bottom}]}>
         {/* Risk Result Section */}
-        <View style={styles.riskSection}>
-          <SVGIcon name="risk" size={42} color={getRiskColor(score)} style={styles.riskIcon} />
-          <Text preset="headerBold" style={styles.riskTitle}>
+        <View style={S.RISK_SECTION}>
+          <SVGIcon name="risk" size={42} color={getRiskColor(score)} style={S.RISK_ICON} />
+          <Text preset="headerBold" style={S.RISK_TITLE}>
             {t('home.answers')}
             <Text preset="headerBold" style={{ color: getRiskColor(score) }}>{t(getRiskText(score))}</Text>
             <Text preset="headerBold"> {t('home.answers2')}</Text>
           </Text>
-          <Text preset="small" style={styles.riskDescription}>
+          <Text preset="small" style={S.RISK_DESCRIPTION}>
             {t(getRiskSubText(score))}
           </Text>
         </View>
 
         {/* Detailed Feedback Title */}
-        <View style={styles.feedbackTitleRow}>
-          <Text preset="headerBold" style={styles.feedbackTitle}>{t('home.detailedFeedback')}</Text>
+        <View style={S.FEEDBACK_TITLE_ROW}>
+          <Text preset="headerBold" style={S.FEEDBACK_TITLE}>{t('home.detailedFeedback')}</Text>
           <TouchableOpacity ref={infoRef} onPress={() => setShowTip(true)} hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}>
-            <SVGIcon name="info" size={12.5} color={colors.white07} style={styles.feedbackInfoIcon} />
+            <SVGIcon name="info" size={12.5} color={colors.white07} style={S.FEEDBACK_INFO_ICON} />
           </TouchableOpacity>
           <InfoTooltip
             anchorRef={infoRef}
@@ -189,48 +191,41 @@ export const MainHomeScreen = ({ navigation }: StackScreenProps<MainStackList, M
         </View>
 
         {/* Feedback Cards Grid */}
-        <View style={styles.feedbackGrid}>
+        <View style={S.FEEDBACK_GRID}>
           <FlatList
             data={FEEDBACK_CARDS}
             scrollEnabled={false}
             numColumns={2}
             keyExtractor={(x) => x.name}
-            columnWrapperStyle={styles.listCtr} // spacing between the 2 columns
+            columnWrapperStyle={S.LIST_CTR} // spacing between the 2 columns
             renderItem={renderItem}
           />
 
-          {/* {FEEDBACK_CARDS.map((card) => (
-            <TouchableOpacity key={card.label} style={styles.feedbackCard} onPress={() => setShowModal(card.name)}>
-              <SVGIcon name={card.icon} size={32} color={card.color} />
-              <Text preset="header4" style={[styles.feedbackCardLabel, { color: card.color }]}>{card.label}</Text>
-            </TouchableOpacity>
-          ))} */}
         </View>
 
         {/* Bottom Button */}
-        {/* {getBtn()} */}
-        {/* <View style={{maxHeight: score <= 2 ? 80 : 50}}> */}
           {user.profile?.recording 
-          ? <View>
+          ? <View style={{gap: 11}}>
               <TouchableOpacity 
-                style={styles.bottomButtonArea} 
+                style={S.BOTTOM_BTN_AREA} 
                 onPress={() => setShowCleanStorageModal(true)}>
                 {/* onPress={handleCleanAndStartNew}>  */}
                   {loading 
                     ? <Loader /> 
-                    : <Text tx='home.newRecording' style={styles.outlinedButtonText}/>}
+                    : <Text tx='home.newRecording' style={S.OUTLINED_BTN_TEXT}/>}
               </TouchableOpacity>
               <TouchableOpacity 
-                style={styles.bottomButtonArea} 
+                style={S.BOTTOM_BTN_AREA} 
                 onPress={() => navigation.navigate(MainStack.REPORT)}>
-                <Text tx='home.reviewRecording' style={styles.outlinedButtonText}/>
+                <Text tx='home.reviewRecording' style={S.OUTLINED_BTN_TEXT}/>
               </TouchableOpacity>
             </View>
           : <TouchableOpacity 
-              style={styles.bottomButtonArea} 
+              style={S.BOTTOM_BTN_AREA} 
               onPress={() => navigation.navigate(MainStack.PRE_RECORDING)}>
-              <Text text={getBtnText()} style={styles.outlinedButtonText}/>
+              <Text text={getBtnText()} style={S.OUTLINED_BTN_TEXT}/>
             </TouchableOpacity>}
+            {/* NEED FOR TESTS */}
             {/* <TouchableOpacity 
                 style={styles.bottomButtonArea} 
                 onPress={() => authInfo.uid && finishSession(authInfo.uid, 'devsession-1')}>
@@ -240,7 +235,7 @@ export const MainHomeScreen = ({ navigation }: StackScreenProps<MainStackList, M
       {/* Feedback Modal */}
       <Modal 
         isVisible={!!showModal}
-        style={styles.modalCtr}
+        style={S.MODAL_CTR}
         onClose={() => setShowModal(null)}
       >
         <FeedbackModal
@@ -250,7 +245,7 @@ export const MainHomeScreen = ({ navigation }: StackScreenProps<MainStackList, M
       {/* Clean storage modal */}
       <Modal 
         isVisible={showCleanStorageModal}
-        style={styles.modalCtr}
+        style={S.MODAL_CTR}
         onClose={() => setShowCleanStorageModal(false)}
       >
         <CleanStorage
@@ -263,113 +258,3 @@ export const MainHomeScreen = ({ navigation }: StackScreenProps<MainStackList, M
   );
 };
 
-
-const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    justifyContent: 'space-evenly',
-    alignItems: 'center',
-    paddingHorizontal: 24,
-    paddingBottom: 80
-  },
-  riskSection: {
-    alignItems: 'center',
-    marginBottom: SCREEN_HEIGHT > 750 ? 34 : 20,
-    marginTop: SCREEN_HEIGHT > 750 ? 34 : 10,
-    paddingHorizontal: 40
-  },
-  riskIcon: {
-    marginBottom: 16,
-  },
-  riskTitle: {
-    textAlign: 'center',
-    marginBottom: 8,
-  },
-  riskDescription: {
-    color: colors.white07,
-    textAlign: 'center',
-    marginBottom: 16,
-    maxWidth: 320,
-  },
-  feedbackTitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 27,
-  },
-  feedbackTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: colors.white,
-    marginRight: 6,
-  },
-  feedbackInfoIcon: {
-    marginTop: 2,
-  },
-  listComponentStyle: {
-    gap: 15,
-    marginBottom: 40,
-  },
-  feedbackGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    gap: 15,
-    marginBottom: 40
-  },
-  feedbackCard: {
-    width: (SCREEN_WIDTH - 120 - 15)/2,
-    height: ((SCREEN_WIDTH - 120 - 15)/2) * 0.65,
-    backgroundColor: colors.primary03,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 15
-  },
-  feedbackCardLabel: {
-    marginTop: 8,
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.white,
-  },
-  bottomButtonArea: {
-    borderColor: colors.white,
-    borderWidth: 1,
-    marginBottom: 20,
-    width: 300,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 24,
-    paddingVertical: 10,
-    borderRadius: 16,
-  },
-  outlinedButton: {
-    borderColor: colors.white,
-    borderWidth: 1,
-    backgroundColor: 'transparent',
-    borderRadius: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 24,
-    width: 300,
-    maxHeight: 60,
-  },
-  outlinedButtonText: {
-    color: colors.white,
-    fontSize: 15,
-    fontWeight: '600',
-    textAlign: 'center',
-    justifyContent: 'flex-end',
-    width: '100%',
-    marginHorizontal: 20,
-    fontFamily: typography.primaryBold
-  },
-  modalCtr: {
-    paddingHorizontal: 41,
-    borderRadius: 16,
-    maxHeight: '90%'
-  },
-  listCtr: {
-    justifyContent: 'center', 
-    gap: 15,
-  }
-});
