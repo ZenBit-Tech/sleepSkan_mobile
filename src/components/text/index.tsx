@@ -24,7 +24,7 @@ export function Text(props: TextProps) {
   const styles = [style, styleOverride, color ? { color: color } : null]
 
   return (
-    <ReactNativeText {...rest} style={styles} testID="test_text">
+    <ReactNativeText allowFontScaling={false} {...rest} style={styles} testID="test_text">
       {content}
     </ReactNativeText>
   )
