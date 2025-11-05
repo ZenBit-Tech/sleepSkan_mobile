@@ -43,9 +43,9 @@ jobs:
           distribution: 'temurin'
           java-version: 17
 
-      # 6️⃣ Install npm dependencies
-      - name: Install NPM dependencies
-        run: npm ci
+      # 6️⃣ Install yarn dependencies
+      - name: Install Yarn dependencies
+        run: yarn install --frozen-lockfile
 
       # 7️⃣ Restore google-services.json
       - name: Restore google-services.json
