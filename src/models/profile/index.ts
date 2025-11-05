@@ -12,6 +12,7 @@ export interface IProfile {
   email?: string
   isProfileComplete: boolean
   name: string
+  label?: string
   //first questionary
   first_questionary?: number
   dob?: string
