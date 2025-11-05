@@ -125,9 +125,14 @@ export const finishSession = async (
       // success
       const data: FinishSessionResponse =
         (await res.json().catch(() => ({ ok: true }))) as FinishSessionResponse;
-
-        const filesCount = Array.isArray((data as any).files) ? (data as any).files.length : 0;
-        const hasFiles = filesCount > 0;
+        const filesCount = () => {
+          if (data.v1) {
+            return Array.isArray((data as any).v1.files) ? (data as any).v1.files.length : 0;
+          } else {
+            return Array.isArray((data as any).files) ? (data as any).files.length : 0;
+          }
+        }
+        const hasFiles = filesCount() > 0;
 
          // If OK but no files yet — treat as "pending" and retry
       if (!hasFiles) {
@@ -142,19 +147,18 @@ export const finishSession = async (
         throw new Error('finishSession succeeded but returned no data files after all attempts.');
       }
 
-        console.log('data', data)
-      data ? await updateUser(uid, {
-        recording: true,
-        risk: data.risk || '',
-        recording_results: data.resultObject || '',
-        pdf_file: data?.pdfReport?.filePath || '',
-      }) : await updateUser(uid, {
-        recording: true,
-      });
+        data ? await updateUser(uid, {
+          recording: true,
+          risk: data.risk || '',
+          recording_results: data.resultObject || `gs://sleep-scan.firebasestorage.app/recordings/${uid}/devsession-1/session-result.json"`,
+          pdf_file: data?.pdfReport?.filePath || '',
+        }) : await updateUser(uid, {
+          recording: true,
+        });
 
       store.dispatch(setRecording(true))
 
-      data.files.length > 0 ? onSuccess?.() : Toast.show({
+      hasFiles ? onSuccess?.() : Toast.show({
         type: 'error',
         text1: 'No files were processed.',
       });
@@ -234,11 +238,11 @@ export const uploadAudioToFirebase = async (
   }
 };
 
-export const fetchSessionJson = async(uid: string) => {
+export const fetchSessionJson = async(uid: string, version: string) => {
   // 1) Ensure we’re authenticated (use your real sign-in; anonymous is just for dev)
   const user = auth().currentUser ?? (await auth().signInAnonymously()).user;
   // 2) Download JSON
-  const url = await storage().ref(`recordings/${uid}/devsession-1/session-result.json`).getDownloadURL();
+  const url = await storage().ref(`recordings/${uid}/devsession-1/${version}.json`).getDownloadURL();
   const res = await fetch(url);
   if (!res.ok) throw new Error(`HTTP ${res.status} for ${uid}`);
   return res.json();

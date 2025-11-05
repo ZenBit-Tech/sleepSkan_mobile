@@ -81,3 +81,17 @@ export const MODAL_WRAPPER: ViewStyle = {
   maxHeight: '90%',
   paddingVertical: 32
 }
+
+export const TEST_BTN: ViewStyle = {
+  borderWidth: 1, 
+  paddingHorizontal: 10, 
+  paddingVertical: 3, 
+  borderRadius: 10,
+  borderColor: colors.blue
+}
+
+export const TEST_CTR: ViewStyle = {
+  flexDirection: 'row', 
+  justifyContent: 'space-between', 
+  marginTop: 20
+}

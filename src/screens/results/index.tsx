@@ -5,6 +5,7 @@ import {
   InteractionManager,
   ScrollView,
   StyleSheet,
+  TouchableOpacity,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -56,16 +57,14 @@ export const SleepReportScreen = ({navigation}: StackScreenProps<MainStackList, 
   const [showNoticeModal, setShowNoticeModal] = useState<boolean>(false)
   const [desiredService, setDesiredService] = useState<'doctor_appointment' | 'prescription' | 'investigation' | undefined>(undefined)
   const [mmIdx, setMmIdx] = useState<number[]>([])
+  const [analyzeVersion, setAnalyzeVersion] = useState<'' | '-v1' | '-v2'>('')
 
   const chartWidth = useMemo(() => 2*SCREEN_WIDTH, [SCREEN_WIDTH])
 
-
   //===============react-native-charts-wrapper=====
-  // const startTimeSec = (1760597779914 + 600000)
   const onePointDuration = totalSleep / resultsData.length
 
   const startTimeSec = useMemo(() => user.profile?.start_recording_time && user.profile?.start_recording_time + 30000, [user.profile?.start_recording_time, trimmedLeadSeconds])
-  
 
   const lineValues = useMemo(
     () => resultsData.map((p, i) => ({ x: i * onePointDuration, y: p.value })),
@@ -106,8 +105,7 @@ export const SleepReportScreen = ({navigation}: StackScreenProps<MainStackList, 
   useEffect(() => {
 
     if (user.profile?.recording_results && authInfo.uid) {
-      const response = fetchSessionJson(authInfo.uid)
-      
+      const response = fetchSessionJson(authInfo.uid, `session-result${analyzeVersion}`)
       response.then((res) => {
 
         const { values: mmVals, indices: mmIdxData } = downsampleMinMax(res.points, Math.floor(chartWidth / 2));
@@ -125,9 +123,10 @@ export const SleepReportScreen = ({navigation}: StackScreenProps<MainStackList, 
         setMmIdx(mmIdxData)
       }).catch((err) => {
         console.log('Error fetching json results', err)
+        setResultsData([])
       })
     }
-  }, [user.profile, authInfo.uid])
+  }, [user.profile, authInfo.uid, analyzeVersion])
 
   const riskLevel = useMemo(() => user.profile?.risk, [user.profile])
 
@@ -183,6 +182,27 @@ const yTicks = Array.from({ length: 10 + 1 }, (_, i) => 30 + i * 5);
         <View style={[S.RISK_LEVEL, { width: gaugeW }]}>
           <View style={[S.RISK_LEVEL_FILL, { width: gaugeFillW, backgroundColor: getRiskColor(riskLevel) }]} />
         </View>
+        {/* NEED FOR TEST */}
+        {user.profile?.label === 'test' && <View style={S.TEST_CTR}>
+          <TouchableOpacity 
+            onPress={() => setAnalyzeVersion('')} 
+            style={[S.TEST_BTN, analyzeVersion === '' && {borderColor: colors.blue_200}]}
+          >
+            <Text text='Default' color={analyzeVersion === '' ? colors.white : colors.blue}/>
+          </TouchableOpacity >
+          <TouchableOpacity 
+            onPress={() => setAnalyzeVersion('-v1')}
+            style={[S.TEST_BTN, analyzeVersion === '-v1' && {borderColor: colors.blue_200}]}
+          >
+            <Text text='Version 1' color={analyzeVersion === '-v1' ? colors.white : colors.blue}/>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            onPress={() => setAnalyzeVersion('-v2')}
+            style={[S.TEST_BTN, analyzeVersion === '-v2' && {borderColor: colors.blue_200}]}
+          >
+            <Text text='Version 2' color={analyzeVersion === '-v2' ? colors.white : colors.blue}/>
+          </TouchableOpacity>
+        </View>}
           {/* Risk & details */}
         <Text preset='headerBold' tx='results.title' style={S.TITLE} />
         <Text preset='headerBold' tx={getRiskText} style={[S.TITLE, { color: getRiskColor(riskLevel) }]} />
@@ -206,14 +226,11 @@ const yTicks = Array.from({ length: 10 + 1 }, (_, i) => 30 + i * 5);
             showsHorizontalScrollIndicator={true}
           >
           <LineChart
-          style={{ height: 300, width: SCREEN_WIDTH *2 }}
-    
-          chartDescription={{ text: '' }}
-          legend={{ enabled: false }}
-    
-          data={{
-            dataSets: [
-              {
+            style={{ height: 300, width: SCREEN_WIDTH *2 }}
+            chartDescription={{ text: '' }}
+            legend={{ enabled: false }}
+            data={{
+              dataSets: [{
                 values: lineValues,
                 label: '',
                 config: {
@@ -228,59 +245,44 @@ const yTicks = Array.from({ length: 10 + 1 }, (_, i) => 30 + i * 5);
                   fillColor: processColor(colors.primary),
                   fillAlpha: 80,
                 },
+              },],
+            }}
+      
+            xAxis={{
+              position: 'BOTTOM',
+              drawGridLines: false,
+              drawAxisLine: false,
+              valueFormatter: 'date',
+              valueFormatterPattern: 'HH:mm',
+              since: startTimeSec,
+              timeUnit: 'SECONDS',
+              granularityEnabled: true,
+              granularity: 1 * onePointDuration, // minimum axis-step (ms)
+              textColor: processColor(colors.greyDark_06),
+              // optional: hide x labels entirely
+              // drawLabels: false,
+            }}
+      
+            yAxis={{
+              left: {
+                axisMinimum: Y_MIN,
+                drawGridLines: true,
+                textColor: processColor(colors.black),
+                axisLineColor: processColor(colors.greyDark_06),
+                axisLineWidth: StyleSheet.hairlineWidth,
               },
-            ],
-          }}
-    
-          xAxis={{
-            position: 'BOTTOM',
-            drawGridLines: false,
-            drawAxisLine: false,
-            valueFormatter: 'date',
-            valueFormatterPattern: 'HH:mm',   // 24h HH:MM
-            since: startTimeSec,               // epoch (ms)
-            timeUnit: 'SECONDS',
-            granularityEnabled: true,
-            granularity: 1 * onePointDuration, // minimum axis-step (ms)
-            textColor: processColor(colors.greyDark_06),
-            // optional: hide x labels entirely
-            // drawLabels: false,
-          }}
-    
-          yAxis={{
-            left: {
-              axisMinimum: Y_MIN,
-              drawGridLines: true,
-              textColor: processColor(colors.black),
-              axisLineColor: processColor(colors.greyDark_06),
-              axisLineWidth: StyleSheet.hairlineWidth,
-            },
-            right: { enabled: false },
-          }}
-    
-          // keep Y labels visible; pan/zoom happens inside the chart view
-          dragEnabled={true}
-          scaleXEnabled={true}
-          scaleYEnabled={false}
-          pinchZoom={false}
-          doubleTapToZoomEnabled={false}
-          highlightPerDragEnabled={false}
-          touchEnabled={true}
-    
-          // show only a window of points, enable horizontal pan
-          // visibleRange={{
-          //   x: {
-          //     min: Math.min(VISIBLE_POINTS, Math.max(1, lineValues.length)),
-          //     max: Math.min(VISIBLE_POINTS, Math.max(1, lineValues.length)),
-          //   },
-          // }}
-          viewPortOffsets={{ left: IS_ANDROID ? 55 : 25, right: 20, top: 0, bottom: 20 }}
-          // onLayout={() => {
-          //   if (!isIOS || lineValues.length === 0) return;
-          //   const window = Math.max(1, Math.min(VISIBLE_POINTS, lineValues.length));
-          //   const scaleX = Math.max(1, lineValues.length / window);
-          //   const xValue = Math.max(0, lineValues.length - window);
-          // }}
+              right: { enabled: false },
+            }}
+      
+            // keep Y labels visible; pan/zoom happens inside the chart view
+            dragEnabled={true}
+            scaleXEnabled={true}
+            scaleYEnabled={false}
+            pinchZoom={false}
+            doubleTapToZoomEnabled={false}
+            highlightPerDragEnabled={false}
+            touchEnabled={true}
+            viewPortOffsets={{ left: IS_ANDROID ? 55 : 25, right: 20, top: 0, bottom: 20 }}
         />
         </ScrollView>
           // ? <ScrollView

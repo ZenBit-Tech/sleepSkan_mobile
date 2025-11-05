@@ -227,9 +227,9 @@ export const MainHomeScreen = ({ navigation }: StackScreenProps<MainStackList, M
             </TouchableOpacity>}
             {/* NEED FOR TESTS */}
             {/* <TouchableOpacity 
-                style={styles.bottomButtonArea} 
+                style={S.BOTTOM_BTN_AREA} 
                 onPress={() => authInfo.uid && finishSession(authInfo.uid, 'devsession-1')}>
-                <Text text='Finish session' style={styles.outlinedButtonText}/>
+                <Text text='Finish session' style={S.OUTLINED_BTN_TEXT}/>
               </TouchableOpacity> */}
       </View>
       {/* Feedback Modal */}
