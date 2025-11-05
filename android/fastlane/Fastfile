@@ -5,7 +5,11 @@
   lane :firebase_beta do
 
     # 🧱 Build both formats
-    gradle(task: "assembleRelease")
+    gradle(
+      task: "assembleRelease",
+      print_command: true,
+      print_command_output: true
+      )
   
     # ✅ Upload to Firebase
     firebase_app_distribution(
