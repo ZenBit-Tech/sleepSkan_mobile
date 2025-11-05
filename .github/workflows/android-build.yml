@@ -3,57 +3,62 @@ name: Android Fastlane Build
 on:
   push:
     branches:
-      - test          # or your branch name
-  workflow_dispatch:  # allow manual trigger
+      - test            # or your target branch
+  workflow_dispatch:    # allow manual trigger
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣ Checkout code
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # 2️⃣ Set up Ruby & Bundler
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.2  # match your local version if needed
+          ruby-version: 3.2
           bundler-cache: false
 
-          # Install from android/Gemfile (not fastlane/)
+      # 3️⃣ Install Ruby gems (from android/Gemfile)
       - name: Install Ruby dependencies
         working-directory: android
         run: |
           gem uninstall -aIx bundler || true
-          gem install bundler --no-document
-          bundle install --jobs 4 --retry 3
+          gem install bundler:2.5.6 --no-document
+          bundle _2.5.6_ install --jobs 4 --retry 3
 
+      # 4️⃣ Set up Node
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
 
+      # 5️⃣ Set up Java
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: 17
 
-      - name: Install dependencies
-        run: |
-          npm install
-          gem uninstall -aIx bundler || true
-          gem install bundler:2.5.6
-          bundle _2.5.6_ install
+      # 6️⃣ Install npm dependencies
+      - name: Install NPM dependencies
+        run: npm ci
 
+      # 7️⃣ Restore google-services.json
       - name: Restore google-services.json
         run: |
           echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > android/app/google-services.json
 
+      # 8️⃣ Restore Firebase key
       - name: Decrypt Firebase key
         run: |
+          mkdir -p android/fastlane
           echo "${{ secrets.FIREBASE_KEY_JSON }}" > android/fastlane/firebase_builds_key.json
 
+      # 9️⃣ Build with Fastlane
       - name: Build with Fastlane
         working-directory: android
         run: bundle exec fastlane android build_release
