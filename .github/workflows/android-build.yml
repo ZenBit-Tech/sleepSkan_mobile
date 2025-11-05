@@ -50,10 +50,9 @@ jobs:
       # 6.1️⃣ Patch kotlin plugin in react-native-background-upload
       - name: Patch react-native-background-upload Gradle plugin
         run: |
-          FILE="node_modules/react-native-background-upload/android/build.gradle"
           if [ -f "$FILE" ]; then
             echo "🔧 Patching $FILE..."
-            sed -i.bak "s/id 'kotlin-android-extensions'/id 'kotlin-parcelize'/g" "$FILE"
+            sed -i.bak "s/apply plugin: 'kotlin-android-extensions'/apply plugin: 'kotlin-parcelize'/g" "$FILE"
           else
             echo "⚠️ File not found: $FILE"
             exit 1
