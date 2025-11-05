@@ -69,7 +69,7 @@ jobs:
       - name: Decrypt Firebase key
         run: |
           mkdir -p android/fastlane
-          echo "${{ secrets.FIREBASE_KEY_JSON }}" > android/fastlane/firebase_builds_key.json
+          echo "${{ secrets.FIREBASE_KEY_JSON }}" | base64 -d > android/fastlane/firebase_builds_key.json
 
       # 9️⃣ Build with Fastlane
       - name: Build with Fastlane
