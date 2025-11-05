@@ -15,7 +15,6 @@
         android_artifact_path: "app/build/outputs/apk/release/app-release.apk",
         android_artifact_type: "APK",
         release_notes: "APK build for internal testing", 
-        groups: "internal-testers"
       )  
   
      # Upload AAB
