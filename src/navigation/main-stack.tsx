@@ -12,12 +12,14 @@ import { MainHomeScreen } from 'src/screens/home';
 import { SLOW_CLOSE, SLOW_OPEN, softCardInterpolator } from 'src/utils/navigation';
 import { RecordingScreen, SleepReportScreen } from 'src/screens';
 import { PreRecordingScreen } from 'src/screens/preRecording';
+import { CheckSoundScreen } from 'src/screens/checkSoundScreen';
 
 export type MainStackList = {
   [MainStack.HOME]: undefined
   [MainStack.RECORDING]: undefined
   [MainStack.PRE_RECORDING]: undefined
   [MainStack.REPORT]: undefined
+  [MainStack.CHECK_SOUND]: undefined
 }
 
 const Stack = createStackNavigator<MainStackList>();
@@ -27,21 +29,6 @@ export const navigationRef = createNavigationContainerRef<MainStackList>();
 
 export const Main_Stack = () => {
 
-  // const isProfileCompleted = useSelector(common.isProfileCompleted)
-  // const profile = useSelector(profileSelector.profile)
-
-
-
-  // useEffect(() => {
-  //   if (profile?.email) {
-  //     amplitude.setUserId(profile.email)
-
-  //     const identify = new Identify()
-
-  //     identify.set('email', profile.email)
-  //     amplitude.identify(identify)
-  //   }
-  // }, [profile?.email])
 
 
   return (
@@ -67,6 +54,13 @@ export const Main_Stack = () => {
       <Stack.Screen 
         name={MainStack.PRE_RECORDING} 
         component={PreRecordingScreen} 
+        options={{
+          gestureEnabled: false,          
+        }}
+      />
+      <Stack.Screen 
+        name={MainStack.CHECK_SOUND} 
+        component={CheckSoundScreen} 
         options={{
           gestureEnabled: false,          
         }}

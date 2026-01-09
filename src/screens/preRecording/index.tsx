@@ -43,7 +43,7 @@ export const PreRecordingScreen = ({navigation}: StackScreenProps<MainStackList,
       authInfo.uid, 
       () => {
         setClearLoading(false)
-        navigation.navigate(MainStack.RECORDING)}
+        navigation.navigate(MainStack.CHECK_SOUND)}
     )
   }, [authInfo.uid, navigation])
 

@@ -16,6 +16,9 @@ export default {
       confirm: 'Confirmar',
       yes: 'Sim',
       no: 'Não',
+      sec: 's',
+      start: 'Iniciar',
+      stop: "Parar"
     },
     loginScreen: {
       typePassword: 'Password',
@@ -201,7 +204,12 @@ export default {
       loading: 'Os resultados estão a ser carregados',
       keepOpen: 'Por favor, não feche a aplicação - o seu relatório poderá ser perdido ',
       left: 'Restam',
-      success: 'Os seus dados foram descarregados com sucesso'
+      success: 'Os seus dados foram descarregados com sucesso',
+      soundCheckDistance: "Por favor, mantenha o telefone a 20 cm de distância, pressione ‘Iniciar’ e leia o texto abaixo. Pressione ‘Iniciar’ quando estiver pronto.",
+      soundCheckText: "Este é um breve teste de som do meu microfone. Estou falando com a minha voz normal para que o aplicativo possa medir o volume.",
+      soundCheckTitle: "Precisamos verificar o nível de som do seu microfone. Você pode, por favor, permanecer em silêncio por 15 segundos?",
+      recStop: "Gravação parada.",
+      recStart: "Gravação iniciada"
     },
     results: {
       title: 'Risco de Apneia',

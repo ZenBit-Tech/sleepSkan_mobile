@@ -224,7 +224,12 @@ export default {
       loading: 'Your results loading',
       keepOpen: 'Please do not close the application or the report  will be lost',
       left: 'Time remaining',
-      success: 'Your data was successfully downloaded'
+      success: 'Your data was successfully downloaded',
+      soundCheckDistance: "Please keep your phone 20 cm from you, press Start and read the text below. Press 'Start' when you are ready",
+      soundCheckText: "This is a short sound check for my microphone. I’m speaking in my normal voice so the app can measure the volume.",
+      soundCheckTitle: "We need to check your microphone sound level, can you please remain silent for 15 seconds",
+      recStop: "Recording stopped.",
+      recStart: "Recording started."
     },
     results: {
       title: 'Risco de Apneia',

@@ -61,6 +61,8 @@ export const SleepReportScreen = ({navigation}: StackScreenProps<MainStackList, 
 
   const chartWidth = useMemo(() => 2*SCREEN_WIDTH, [SCREEN_WIDTH])
 
+  const SPL = useMemo(() => user.profile?.SPL_at_0dBFS ? user.profile?.SPL_at_0dBFS : 86, [user.profile])
+
   //===============react-native-charts-wrapper=====
   const onePointDuration = totalSleep / resultsData.length
 
@@ -111,7 +113,7 @@ export const SleepReportScreen = ({navigation}: StackScreenProps<MainStackList, 
         const { values: mmVals, indices: mmIdxData } = downsampleMinMax(res.points, Math.floor(chartWidth / 2));
 
         // const data = mmVals.map(v => ({ value: v + 94}));
-        const data = res.points.map((v: number) => ({ value: v + 94}));
+        const data = res.points.map((v: number) => ({ value: v + SPL}));
         setTotalSleep(res.totalSeconds)
         setTotalSnore(res.totalSnoringSec)
         setPeak(res.peakSnore)

@@ -23,7 +23,8 @@ export enum MainStack {
   HOME = 'Home',
   RECORDING = 'Recording',
   PRE_RECORDING = 'PreRecordingScreen',
-  REPORT = 'SleepReportScreen'
+  REPORT = 'SleepReportScreen',
+  CHECK_SOUND = 'CheckSoundScreen'
 }
 
 export enum MainTabs {

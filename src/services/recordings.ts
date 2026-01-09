@@ -238,6 +238,62 @@ export const uploadAudioToFirebase = async (
   }
 };
 
+export const uploadAudioCalibrationToFirebase = async (
+  filePath: string,
+  fileName: string,
+  userId: string,
+  onSuccess?: () => void
+): Promise<string> => {
+  try {
+    if (!filePath || typeof filePath !== 'string') {
+      throw new Error(`uploadAudioToFirebase: invalid path: ${String(filePath)}`);
+    }
+    const fileExists = await RNFS.exists(filePath);
+    if (!fileExists) throw new Error('File does not exist at path: ' + filePath);
+
+    // const fileRef = await storage().ref(`recordings/${userId}/devsession-1/${fileName}`);
+    const fileRef = await storage().ref(`calibration/${userId}/${fileName}`);
+
+    // ✅ Use putFile for local file uploads (no need for base64 or blob)
+    console.log(filePath)
+    const task = fileRef.putFile(filePath, { contentType: Platform.OS === 'ios' ? 'audio/m4a' : 'audio/wav' });
+
+    return new Promise((resolve, reject) => {
+      const unsubscribe = task.on(
+        'state_changed',
+        (snap) => {
+          // if (onProgress && snap.totalBytes > 0) {
+          //   onProgress(snap.bytesTransferred / snap.totalBytes);
+          // }
+        },
+        (error) => {
+          unsubscribe();
+          reject(error);
+          console.error('❌ uploadAudioToFirebase error:', error);
+        },
+        async () => {
+          try {
+            unsubscribe();
+            onSuccess?.();
+            const url = await fileRef.getDownloadURL();
+            resolve(url);
+          } catch (e) {
+            // still succeed with a fallback if URL fails
+            onSuccess?.();
+            resolve(fileRef.fullPath);
+
+            console.log('❌ Failed to get download URL, but upload succeeded:', e);
+          }
+        }
+      );
+    });
+
+  } catch (err) {
+    console.error('❌ Error in uploadAudioToFirebase:', err);
+    throw err;
+  }
+};
+
 export const fetchSessionJson = async(uid: string, version: string) => {
   // 1) Ensure we’re authenticated (use your real sign-in; anonymous is just for dev)
   const user = auth().currentUser ?? (await auth().signInAnonymously()).user;
