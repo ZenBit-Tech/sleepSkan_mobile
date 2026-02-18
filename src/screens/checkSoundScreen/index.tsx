@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   TouchableOpacity,
   View,
@@ -7,33 +7,33 @@ import {
   NativeEventEmitter,
   Alert,
 } from 'react-native';
-import { useTranslation } from 'react-i18next';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { StackScreenProps } from '@react-navigation/stack';
-import { getAuth } from '@react-native-firebase/auth';
-import { activateKeepAwake } from '@sayem314/react-native-keep-awake';
+import {useTranslation} from 'react-i18next';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {StackScreenProps} from '@react-navigation/stack';
+import {getAuth} from '@react-native-firebase/auth';
+import {activateKeepAwake} from '@sayem314/react-native-keep-awake';
 import RNFS from 'react-native-fs';
-import { check, PERMISSIONS, request, RESULTS } from 'react-native-permissions';
+import {check, PERMISSIONS, request, RESULTS} from 'react-native-permissions';
 import Toast from 'react-native-toast-message';
 
-import { Loader, MainHeader, Screen, Text } from 'src/components';
-import { MainStack } from 'src/constants';
-import { MainStackList } from 'src/navigation';
+import {Loader, MainHeader, Screen, Text} from 'src/components';
+import {MainStack} from 'src/constants';
+import {MainStackList} from 'src/navigation';
 import * as S from './styles';
-import { uploadAudioCalibrationToFirebase } from 'src/services';
-import { useAudioRecorderCore } from '@asolerp/react-native-audio-chunk-recorder';
-import { CommonActions } from '@react-navigation/native';
-import { colors } from 'src/theme';
+import {uploadAudioCalibrationToFirebase} from 'src/services';
+import {useAudioRecorderCore} from '@asolerp/react-native-audio-chunk-recorder';
+import {CommonActions} from '@react-navigation/native';
+import {colors} from 'src/theme';
 
 const auth = getAuth();
 
 export const CheckSoundScreen = ({
   navigation,
 }: StackScreenProps<MainStackList, MainStack.CHECK_SOUND>) => {
-  const { t } = useTranslation();
+  const {t} = useTranslation();
   const user = auth.currentUser;
   const insets = useSafeAreaInsets();
-  const { WakeLock, RecordAudioService } = NativeModules;
+  const {WakeLock, RecordAudioService} = NativeModules;
 
   // 1 = silent phase, 2 = loud phase
   const [screen, setScreen] = useState<1 | 2>(1);
@@ -75,12 +75,12 @@ export const CheckSoundScreen = ({
     autoStartRecording: false,
     defaultRecordingOptions: {
       chunkSeconds: 600,
-      maxRecordingDuration: 50400
+      maxRecordingDuration: 50400,
     },
     onMaxDurationReached: () => {
       stopRecording().catch(() => {});
     },
-    onChunkReady: async (chunk) => {
+    onChunkReady: async chunk => {
       if (!user?.uid) return;
       const fileName = `${screen === 1 ? 'silent' : 'loud'}.wav`;
       try {
@@ -89,7 +89,7 @@ export const CheckSoundScreen = ({
         console.error('Upload failed', error);
       }
     },
-    onError: (error) => {
+    onError: error => {
       console.error('❌ Recording error:', error);
       Alert.alert('Error', error.message);
     },
@@ -104,11 +104,11 @@ export const CheckSoundScreen = ({
 
       const onState = emitter.addListener(
         'RecordAudioState',
-        ({ state, reason }) => {
+        ({state, reason}) => {
           if (state === 'stopped') {
             Toast.show({
               type: 'info',
-              text1:  t('recording.recStop'),
+              text1: t('recording.recStop'),
             });
           } else if (state === 'recording') {
             Toast.show({
@@ -121,14 +121,14 @@ export const CheckSoundScreen = ({
 
       const onStopped = emitter.addListener(
         'RecordAudioStopped',
-        ({ reason }) => {
+        ({reason}) => {
           console.log('RecordAudioStopped event:', reason);
         },
       );
 
       const sub = emitter.addListener(
         'RecordAudioChunk',
-        async ({ path, index, success }) => {
+        async ({path, index, success}) => {
           if (!success || !user?.uid) return;
           const fileName = `${screen === 1 ? 'silent' : 'loud'}.m4a`;
           await uploadAudioCalibrationToFirebase(path, fileName, user.uid);
@@ -186,13 +186,13 @@ export const CheckSoundScreen = ({
         console.log('Error stopping iOS recording', e);
       }
     }
-    setStarted(false)
+    setStarted(false);
     if (screen === 1) {
       setTimeout(async () => {
         setScreen(2);
         // setStarted(true)
         // await handleStartNativeRecording();
-      }, 500)
+      }, 500);
     }
   }, [stopRecording, screen, WakeLock, RecordAudioService]);
 
@@ -203,8 +203,7 @@ export const CheckSoundScreen = ({
 
     // then set UI state
     // setScreen(1);        // silent phase
-    screen === 1 && setSecondsLeft(15);  // 30s countdown
-    console.log('HERE 1')
+    screen === 1 && setSecondsLeft(15); // 30s countdown
     setStarted(true);
   }, [handleStartNativeRecording]);
 
@@ -214,14 +213,14 @@ export const CheckSoundScreen = ({
     if (!started || screen !== 1) return;
 
     // If time is over, switch to loud phase (keep recording running)
-    if  (secondsLeft <= 0) {
-      handleStopNativeRecording()
-    
+    if (secondsLeft <= 0) {
+      handleStopNativeRecording();
+
       return;
     }
 
     const id = setTimeout(() => {
-      setSecondsLeft((prev) => prev - 1);
+      setSecondsLeft(prev => prev - 1);
     }, 1000);
 
     return () => clearTimeout(id);
@@ -233,18 +232,18 @@ export const CheckSoundScreen = ({
       await handleStopNativeRecording();
 
       navigation.dispatch(
-      CommonActions.reset({
-        index: 1,
-        routes: [
-          {
-            name: MainStack.HOME,
-          },
-          {
-            name: MainStack.RECORDING,
-          },
-        ],
-      })
-    );
+        CommonActions.reset({
+          index: 1,
+          routes: [
+            {
+              name: MainStack.HOME,
+            },
+            {
+              name: MainStack.RECORDING,
+            },
+          ],
+        }),
+      );
     } catch (e) {
       console.warn('Failed to stop loud recording or navigate', e);
     } finally {
@@ -253,24 +252,18 @@ export const CheckSoundScreen = ({
     }
   }, [handleStopNativeRecording, navigation]);
 
-  const startLoudRecording = async() => {
-    console.log('HERE 2')
-        setStarted(true)
-        await handleStartNativeRecording();
-  }
+  const startLoudRecording = async () => {
+    setStarted(true);
+    await handleStartNativeRecording();
+  };
 
-  console.log("STARTED", started)
-  
   // ====== RENDER ======
   return (
     <Screen customHeader={<MainHeader withLogout withBack />}>
-      <View style={{ marginVertical: 40, marginHorizontal: 40 }}>
+      <View style={{marginVertical: 40, marginHorizontal: 40}}>
         {screen === 1 ? (
           <View>
-            <Text
-              style={S.GOODNIGHT}
-              tx='recording.soundCheckTitle'
-            />
+            <Text style={S.GOODNIGHT} tx="recording.soundCheckTitle" />
 
             {!started && (
               <TouchableOpacity style={S.BUTTON} onPress={handleStartRecording}>
@@ -281,36 +274,38 @@ export const CheckSoundScreen = ({
             {started && (
               <View style={S.CIRCLE}>
                 <View>
-                  <Text style={S.TIMER}>{secondsLeft} {t('common.sec')}</Text>
+                  <Text style={S.TIMER}>
+                    {secondsLeft} {t('common.sec')}
+                  </Text>
                 </View>
               </View>
             )}
           </View>
         ) : (
-          <View style={{ gap: 30 }}>
+          <View style={{gap: 30}}>
             {/* {started ? ( */}
-              <View style={{gap: 40}}>
-                <Text
-                  style={S.GOODNIGHT}
-                  tx='recording.soundCheckDistance'
-                />
-                <View style={{borderColor: colors.beige, borderWidth: 1, borderRadius: 20, padding: 10}}>
-                  <Text
-                    style={S.GOODNIGHT}
-                    tx='recording.soundCheckText'
-                  />
-                </View>
-
-                
+            <View style={{gap: 40}}>
+              <Text style={S.GOODNIGHT} tx="recording.soundCheckDistance" />
+              <View
+                style={{
+                  borderColor: colors.beige,
+                  borderWidth: 1,
+                  borderRadius: 20,
+                  padding: 10,
+                }}>
+                <Text style={S.GOODNIGHT} tx="recording.soundCheckText" />
               </View>
+            </View>
 
-            {!started 
-              ? <TouchableOpacity style={S.BUTTON} onPress={startLoudRecording}>
+            {!started ? (
+              <TouchableOpacity style={S.BUTTON} onPress={startLoudRecording}>
                 <Text tx="common.start" style={S.BTN_TEXT} />
-              </TouchableOpacity> 
-              : <TouchableOpacity style={S.BUTTON} onPress={handleStopLoudPhase}>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity style={S.BUTTON} onPress={handleStopLoudPhase}>
                 <Text tx="common.stop" style={S.BTN_TEXT} />
-              </TouchableOpacity>}
+              </TouchableOpacity>
+            )}
           </View>
         )}
       </View>
