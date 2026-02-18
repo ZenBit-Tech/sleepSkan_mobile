@@ -113,6 +113,25 @@ export const getUser = async (userId: string) => {
   }
 };
 
+export const sendSoundLevels = async(userId: string, silentLevels: any, loudLevels: any, ) => {
+  try {
+   await firestore()
+        .collection('users')
+        .doc(userId)
+        .collection('soundChecks')
+        .add({
+          createdAt: firestore.FieldValue.serverTimestamp(),
+          silentLevels, // the whole array
+          loudLevels, // the whole array
+
+        });
+
+      console.log('✅ Levels sent to Firestore, count:', loudLevels.length);
+    } catch (err) {
+      console.error('❌ Failed to send levels to Firestore', err);
+    }
+}
+
 export const updateUser = async (
   userId: string,
   updatedData: Partial<UserData>,

@@ -43,6 +43,7 @@ export interface IProfile {
   recording_results?: string;
   pdf_file?: string;
   start_recording_time?: number
+  SPL_at_0dBFS?: number
 }
 
 export enum COFFEE_VARIANTS {

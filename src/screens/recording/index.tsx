@@ -218,13 +218,13 @@ useEffect(() => {
         if (state === 'stopped') {
           Toast.show({
             type: 'info',
-            text1: 'Recording stopped.',
+            text1: t('recording.recStop'),
           })
           // stop UI timers, navigate, etc…
         } else if (state === 'recording') {
           Toast.show({
             type: 'success',
-            text1: 'Recording started.',
+            text1: t('recording.recStart'),
           })
           // stop UI timers, navigate, etc…
         }
